@@ -26,7 +26,7 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
             <wv2:WebView2 Grid.Column="0" Grid.RowSpan="2" Width="1136" Height="640" Name="webView" d:Source="https://shinycolors.enza.fun"
-                          CoreWebView2InitializationCompleted="ApplyKoreanPatchOnInitialLoad" WebMessageReceived="DebugMessageReceived" NavigationStarting="DisableButtons" VerticalAlignment="Top"/>
+                          CoreWebView2InitializationCompleted="ApplyKoreanPatchOnInitialLoad" WebMessageReceived="DebugMessageReceived" NavigationStarting="OnNavigationStart" VerticalAlignment="Top"/>
 
             <StackPanel Grid.Column="1" Orientation="Vertical" Margin="3 0 3 3">
                 <Button Name="captureButton" Width="Auto" Height="60" Click="CaptureButton_Click">캡처</Button>
@@ -48,7 +48,7 @@
                 </Grid>
             </StackPanel>
             <StackPanel Name="settingsPanel" Orientation="Vertical" Grid.Row="1" Grid.Column="1" Margin="3">
-                <CheckBox Name="locPatchCheckBox" IsChecked="{Binding Path=EnableKoreanPatch, Mode=TwoWay}" Click="SetLocalizationPatch">한글패치 켜기</CheckBox>
+                <CheckBox Name="locPatchCheckBox" IsChecked="{Binding Path=EnableKoreanPatch, Mode=TwoWay}">한글패치 켜기</CheckBox>
                 <Label>스크린샷 저장 경로</Label>
                 <TextBox Name="screenshotDirTextBox" Text="{Binding Path=ScreenshotSavePath, Mode=TwoWay}" KeyDown="DetectEnterAndUpdate" />
                 <Button Name="screenshotFolderSelectButton" Margin="0 2 0 0" Height="30" Click="SelectScreenshotFolder">폴더 선택</Button>

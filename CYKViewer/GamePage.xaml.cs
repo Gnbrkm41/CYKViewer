@@ -42,9 +42,6 @@ namespace CYKViewer
         private readonly System.Timers.Timer _statusBarTimer = new(10000);
         public MainWindow ParentWindow { get; set; }
 
-        // The script ID returned from applyKoreanPatch function - necessary if we get request to disable localization script
-        private string _scriptId = null;
-
         public GamePage(MainWindow parentWindow, string userDataFolder, Settings settings)
         {
             InitializeComponent();
@@ -139,8 +136,10 @@ $@"(function()
             file.Close();
         }
 
-        private async void ApplyKoreanPatchOnInitialLoad(object sender, CoreWebView2InitializationCompletedEventArgs e)
+        private void ApplyKoreanPatchOnInitialLoad(object sender, CoreWebView2InitializationCompletedEventArgs e)
         {
+            webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
+
             if (!e.IsSuccess)
             {
                 Debug.WriteLine("Initialization failed?");
@@ -175,17 +174,6 @@ $@"(function()
 
             webView.CoreWebView2.AddHostObjectToScript("SC_CommsExtractionMenuEntry", _commsExtraction);
             webView.CoreWebView2.AddHostObjectToScript("SC_BgmEnableMenuEntry", _enableBgm);
-
-            string prepScript = File.ReadAllText("scripts/pre-inject.js");
-
-            if (locPatchCheckBox.IsChecked != true)
-            {
-                _scriptId = await DisableLocalizationPatch();
-            }
-            else
-            {
-                _scriptId = await EnableLocalizationPatch();
-            }
         }
 
         private Task<string> EnableLocalizationPatch()
@@ -196,16 +184,10 @@ $@"(function()
                 return Task.FromResult<string>(null);
             }
 
-            string scriptId = Interlocked.Exchange(ref _scriptId, null);
-            if (scriptId != null)
-            {
-                webView.CoreWebView2.RemoveScriptToExecuteOnDocumentCreated(scriptId);
-            }
-
             string prepScript = File.ReadAllText("scripts/pre-inject.js");
             string script = File.ReadAllText(scriptPath);
 
-            return webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(prepScript + script);
+            return webView.ExecuteScriptAsync(prepScript + script);
         }
 
         private Task<string> DisableLocalizationPatch()
@@ -216,15 +198,9 @@ $@"(function()
                 return Task.FromResult<string>(null);
             }
 
-            string scriptId = Interlocked.Exchange(ref _scriptId, null);
-            if (scriptId != null)
-            {
-                webView.CoreWebView2.RemoveScriptToExecuteOnDocumentCreated(scriptId);
-            }
-
             string prepScript = File.ReadAllText("scripts/pre-inject.js");
 
-            return webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(prepScript);
+            return webView.ExecuteScriptAsync(prepScript);
         }
 
 
@@ -257,12 +233,21 @@ $@"(function()
             }
         }
 
-        private void DisableButtons(object sender, CoreWebView2NavigationStartingEventArgs e)
+        private async void OnNavigationStart(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
             // Disable the BGM / Comms extract button - the script should re-enable the buttons
             // if the URL is valid and the script is loaded.
             bgmButton.IsEnabled = false;
             extractButton.IsEnabled = false;
+
+            if (locPatchCheckBox.IsChecked != true)
+            {
+                await DisableLocalizationPatch();
+            }
+            else
+            {
+                await EnableLocalizationPatch();
+            }
         }
 
         private void DetectEnterAndUpdate(object sender, KeyEventArgs e)
@@ -287,18 +272,6 @@ $@"(function()
                 return;
 
             screenshotDirTextBox.Text = dialog.FileName;
-        }
-
-        private async void SetLocalizationPatch(object sender, RoutedEventArgs e)
-        {
-            if (locPatchCheckBox.IsChecked == true)
-            {
-                _scriptId = await EnableLocalizationPatch();
-            }
-            else
-            {
-                _scriptId = await DisableLocalizationPatch();
-            }
         }
 
         private void Refresh(object sender, RoutedEventArgs e)
