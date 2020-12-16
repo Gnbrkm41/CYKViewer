@@ -17,9 +17,11 @@ function Debug_Console(message) {
 
 Debug_Console("Hello from WebView2!");
 
-// Shortcuts to the host objects
-var SC_CommsExtractionMenuEntry = chrome.webview.hostObjects.sync.SC_CommsExtractionMenuEntry;
-var SC_BgmEnableMenuEntry = chrome.webview.hostObjects.sync.SC_BgmEnableMenuEntry;
+// Shortcuts to the host objects - can't be used, because there's issues where host objects are GC'd prematurely
+// (Fixed in 1.0.707-prerelease, but the bug fix is not GA yet as of 2020-12-17)
+// https://github.com/MicrosoftEdge/WebView2Feedback/issues/335
+// var SC_CommsExtractionMenuEntry = chrome.webview.hostObjects.sync.SC_CommsExtractionMenuEntry;
+// var SC_BgmEnableMenuEntry = chrome.webview.hostObjects.sync.SC_BgmEnableMenuEntry;
 
 // Storage object for the menu entries
 var SC_MenuEntries = {};
@@ -61,12 +63,12 @@ function Implementation_registerMenuCommand(commandName, commandFunc, accessKey)
     // Call the C# code to let it know the menu's being updated if they're BGM/Comms extraction related
     if (commandName.includes("BGM")) {
         Debug_Console(`"${commandName}" - is BGM related, calling the host`);
-        SC_BgmEnableMenuEntry.Set(menuId, commandName);
+        chrome.webview.hostObjects.sync.SC_BgmEnableMenuEntry.Set(menuId, commandName);
         Debug_Console(`"${commandName}" - Host called`);
     }
     else if (commandName.includes("커뮤")) {
         Debug_Console(`"${commandName}" - is comms related, calling the host`);
-        SC_CommsExtractionMenuEntry.Set(menuId, commandName);
+        chrome.webview.hostObjects.sync.SC_CommsExtractionMenuEntry.Set(menuId, commandName);
         Debug_Console(`"${commandName}" - Host called`);
     }
 
@@ -85,12 +87,12 @@ function Implementation_unregisterMenuCommand(menuCmdId) {
         // Call the C# code to let it know the menu's being updated if they're BGM/Comms extraction related
         if (menuEntry.commandName.includes("BGM")) {
             Debug_Console(`"${menuEntry.commandName}" - is BGM related, calling the host`);
-            SC_BgmEnableMenuEntry.Set(null, null);
+            chrome.webview.hostObjects.sync.SC_BgmEnableMenuEntry.Set(null, null);
             Debug_Console(`"${menuEntry.commandName}" - Host called`);
         }
         else if (menuEntry.commandName.includes("커뮤")) {
             Debug_Console(`"${menuEntry.commandName}" - is comms related, calling the host`);
-            SC_CommsExtractionMenuEntry.Set(null, null);
+            chrome.webview.hostObjects.sync.SC_CommsExtractionMenuEntry.Set(null, null);
             Debug_Console(`"${menuEntry.commandName}" - Host called`);
         }
     }
@@ -108,8 +110,8 @@ if (window.location.hostname.includes("shinycolors.enza.fun")) {
 else {
     Debug_Console(`Hostname is "${window.location.hostname}", not injecting the GM functions`);
     // Also going to reset the buttons, because those are useless when we're not in the shinycolors page.
-    SC_BgmEnableMenuEntry.Set(null, null);
-    SC_CommsExtractionMenuEntry.Set(null, null);
+    chrome.webview.hostObjects.sync.SC_BgmEnableMenuEntry.Set(null, null);
+    chrome.webview.hostObjects.sync.SC_CommsExtractionMenuEntry.Set(null, null);
 }
 
 // Taken from the Edge WebView2 examples page - disables the context menu (right click)
