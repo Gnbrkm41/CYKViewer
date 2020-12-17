@@ -8,7 +8,7 @@
     <ApplicationIcon>icon_49.ico</ApplicationIcon>
     <Authors>Gnbrkm41</Authors>
     <Product>CYKViewer</Product>
-    <Version>1.0.0</Version>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
@@ -43,7 +43,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="MicrosoftEdgeWebview2Setup.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="scripts\pre-inject.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="읽어주세요.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -51,5 +57,4 @@
   <ItemGroup>
     <TrimmerRootAssembly Include="PresentationCore" />
   </ItemGroup>
-
 </Project>
