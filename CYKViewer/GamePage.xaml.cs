@@ -25,6 +25,8 @@ using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using Microsoft.WindowsAPICodePack.Dialogs;
 
+using NAudio.CoreAudioApi;
+
 namespace CYKViewer
 {
     /// <summary>
@@ -287,6 +289,56 @@ $@"(function()
         private void GoForward(object sender, RoutedEventArgs e)
         {
             webView.GoForward();
+        }
+
+        private void muteButton_Click(object sender, RoutedEventArgs e)
+        {
+            using MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
+            MMDevice defaultPlaybackDevice;
+            try
+            {
+                // It appears that the webview always use the default playback device.
+                defaultPlaybackDevice = deviceEnumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+            }
+            catch (COMException ex) when ((uint)ex.HResult == 0x80070490) // E_NOTFOUND; returned when no default device exists
+            {
+                return;
+            }
+
+            AudioSessionManager manager = null;
+            AudioSessionControl webView2Session = null;
+            try
+            {
+                manager = defaultPlaybackDevice.AudioSessionManager;
+                SessionCollection playbackSessions = manager.Sessions;
+                for (int i = 0; i < playbackSessions.Count; i++)
+                {
+                    // Unfortunately, the webview creates multiple processes and the process ID we get from CoreWebView2 isn't for the process that plays the audio
+                    AudioSessionControl session = playbackSessions[i];
+
+                    using Process process = Process.GetProcessById((int)session.GetProcessID);
+                    if (process.ProcessName != "msedgewebview2")
+                    {
+                        session.Dispose();
+                        continue;
+                    }
+                    webView2Session = session;
+                    break;
+                }
+
+                if (webView2Session == null)
+                {
+                    return;
+                }
+
+                webView2Session.SimpleAudioVolume.Mute = ((ToggleButton)sender).IsChecked == true;
+            }
+            finally
+            {
+                defaultPlaybackDevice?.Dispose();
+                manager?.Dispose();
+                webView2Session?.Dispose();
+            }
         }
     }
 

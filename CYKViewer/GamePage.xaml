@@ -33,6 +33,7 @@
                 <Button Name="bgmButton" Margin="0 2 0 0" Height="30" IsEnabled="False">BGM</Button>
                 <Button Name="extractButton" Margin="0 2 0 0" Height="30" IsEnabled="False">추출</Button>
                 <ToggleButton Name="alwaysOnTopButton" Margin="0 2 0 0" Height="30" Click="ConfigureAlwaysOnTop">항상 위에</ToggleButton>
+                <ToggleButton Name="muteButton" Margin="0 2 0 0" Height="30" Click="muteButton_Click">음소거</ToggleButton>
                 <Label>현재 주소</Label>
                 <TextBox Text="{Binding Path=Source, ElementName=webView, Mode=TwoWay, UpdateSourceTrigger=Explicit}" KeyDown="DetectEnterAndUpdate" />
                 <Grid Margin="0 2 0 0" Height="30">
