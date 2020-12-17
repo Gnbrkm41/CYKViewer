@@ -5,8 +5,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -97,43 +100,82 @@ namespace CYKViewer
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            using HttpClient client = new();
+            // Check for the app's update
+            Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/Gnbrkm41/CYKViewer/releases/latest");
+            request.Headers.Add("User-Agent", $"Gnbrkm41-CYKViewer-v" + currentVersion.ToString(3));
+            request.Headers.Add("Accept", "application/vnd.github.v3+json");
+
+            Version latestVersion = null;
+            try
+            {
+                HttpResponseMessage response = await client.SendAsync(request);
+                response.EnsureSuccessStatusCode();
+                GithubRelease deserializedResponse = await response.Content.ReadFromJsonAsync<GithubRelease>();
+                string latestRelease = deserializedResponse.TagName;
+                latestVersion = new Version(latestRelease.TrimStart('v'));
+            }
+            catch (HttpRequestException ex)
+            {
+                Debug.WriteLine($"Update check failed: {ex}");
+            }
+
+            if (latestVersion != null)
+            {
+                Debug.WriteLine($"Latest release is {latestVersion}");
+                if (latestVersion > currentVersion)
+                {
+                    openReleasesPageButton.Visibility = Visibility.Visible;
+                }
+            }
+
             // Check for localization patch's update
-            string onlineScript;
-            using (HttpClient client = new())
+            string onlineScript = null;
+            try
             {
                 onlineScript = await client.GetStringAsync("https://newbiepr.github.io/Temporary_KRTL/ShinyColors.user.js");
             }
-
-            var onlineScriptMatch = Regex.Match(onlineScript, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
-            string onlineVersionString = onlineScriptMatch.Groups["version"].Value;
-            Debug.WriteLine($"The version of the script from update source is {onlineVersionString}");
-            bool onlineIsNewer = true;
-            var scriptVersion = onlineVersionString;
-            if (File.Exists(s_scriptPath))
+            catch (HttpRequestException ex)
             {
-                string existingScript = await File.ReadAllTextAsync(s_scriptPath);
-                var existingMatch = Regex.Match(existingScript, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
-                string existingVersionString = existingMatch.Groups["version"].Value;
-                Debug.WriteLine($"The version of the offline script is {existingVersionString}");
-                onlineIsNewer = new Version(onlineVersionString) > new Version(existingVersionString);
-                if (!onlineIsNewer)
+                Debug.WriteLine($"Script update check failed: {ex}");
+            }
+
+            string scriptVersion = null;
+            if (onlineScript != null)
+            {
+                Match onlineScriptMatch = Regex.Match(onlineScript, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
+                string onlineVersionString = onlineScriptMatch.Groups["version"].Value;
+                Debug.WriteLine($"The version of the script from update source is {onlineVersionString}");
+                bool onlineIsNewer = true;
+                scriptVersion = onlineVersionString;
+                if (File.Exists(s_scriptPath))
                 {
-                    onlineScript = existingScript;
+                    string existingScript = await File.ReadAllTextAsync(s_scriptPath);
+                    var existingMatch = Regex.Match(existingScript, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
+                    string existingVersionString = existingMatch.Groups["version"].Value;
+                    Debug.WriteLine($"The version of the offline script is {existingVersionString}");
+                    onlineIsNewer = new Version(onlineVersionString) > new Version(existingVersionString);
+                    if (!onlineIsNewer)
+                    {
+                        onlineScript = existingScript;
+                    }
+                    scriptVersion = onlineIsNewer ? onlineVersionString : existingVersionString;
                 }
-                scriptVersion = onlineIsNewer ? onlineVersionString : existingVersionString;
-            }
-            else
-            {
-                Debug.WriteLine($"The offline script does not exist.");
-            }
+                else
+                {
+                    Debug.WriteLine($"The offline script does not exist.");
+                }
 
-            if (onlineIsNewer)
-            {
-                // The online script is newer, updating...
-                Debug.WriteLine($"Updating the script...");
-                await File.WriteAllTextAsync(s_scriptPath, onlineScript);
+                if (onlineIsNewer)
+                {
+                    // The online script is newer, updating...
+                    Debug.WriteLine($"Updating the script...");
+                    await File.WriteAllTextAsync(s_scriptPath, onlineScript);
+                }
+                Debug.WriteLine("Update logic complete.");
             }
-            Debug.WriteLine("Update logic complete.");
 
             // Look for a configuration file.
             if (File.Exists(s_settingsPath))
@@ -159,5 +201,26 @@ namespace CYKViewer
             string settingsJson = JsonSerializer.Serialize(_settings);
             await File.WriteAllTextAsync(s_settingsPath, settingsJson);
         }
+
+        private void OpenReleasesPage(object sender, RoutedEventArgs e)
+        {
+            ProcessStartInfo info = new("https://github.com/Gnbrkm41/CYKViewer/releases/latest")
+            {
+                UseShellExecute = true
+            };
+            Process.Start(info).Dispose();
+        }
+    }
+
+    class GithubRelease
+    {
+        [JsonPropertyName("url")]
+        public string Url { get; set; }
+
+        [JsonPropertyName("tag_name")]
+        public string TagName { get; set; }
+
+        [JsonPropertyName("name")]
+        public string Name { get; set; }
     }
 }

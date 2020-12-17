@@ -187,7 +187,15 @@ $@"(function()
             }
 
             string prepScript = File.ReadAllText("scripts/pre-inject.js");
-            string script = File.ReadAllText(scriptPath);
+            string script = null;
+            try
+            {
+                script = File.ReadAllText(scriptPath);
+            }
+            catch (IOException ex)
+            {
+                Debug.WriteLine($"Failed to read the localization patch script: {ex}");
+            }
 
             return webView.ExecuteScriptAsync(prepScript + script);
         }

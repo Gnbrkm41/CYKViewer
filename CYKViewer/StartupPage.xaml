@@ -36,5 +36,8 @@
             <Button Name="registerNewProfileButton" Grid.Row="1" Margin="0 2 0 0" Grid.Column="1" Click="AddProfileButton_Click">등록</Button>
             <Button Name="startButton" Grid.Row="2" Margin="0 2 0 0" Grid.ColumnSpan="2" Click="StartRequested">시작</Button>
         </Grid>
+        <Border Grid.Column="1" Height="50" VerticalAlignment="Bottom" Margin="10">
+            <Button Name="openReleasesPageButton" Visibility="Hidden" Background="AliceBlue" Click="OpenReleasesPage">업데이트가 있습니다, 여길 눌러 확인하세요</Button>
+        </Border>
     </Grid>
 </Page>
