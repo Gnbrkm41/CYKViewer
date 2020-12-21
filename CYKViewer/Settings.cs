@@ -47,7 +47,19 @@ namespace CYKViewer
             }
         }
 
+        private string _localizationPatchVersion;
         [JsonIgnore]
-        public string LocalizationPatchVersion { get; set; }
+        public string LocalizationPatchVersion
+        {
+            get => _localizationPatchVersion;
+            set
+            {
+                _localizationPatchVersion = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        [JsonIgnore]
+        public string ClientVersion { get; set; }
     }
 }

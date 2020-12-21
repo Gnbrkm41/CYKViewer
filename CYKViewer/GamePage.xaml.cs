@@ -242,11 +242,11 @@ $@"(function()
 
             if (locPatchCheckBox.IsChecked != true)
             {
-                await DisableLocalizationPatch();
+                _ = await DisableLocalizationPatch();
             }
             else
             {
-                await EnableLocalizationPatch();
+                _ = await EnableLocalizationPatch();
             }
         }
 
@@ -289,9 +289,9 @@ $@"(function()
             webView.GoForward();
         }
 
-        private void muteButton_Click(object sender, RoutedEventArgs e)
+        private void ChangeWebViewMuteStatus(object sender, RoutedEventArgs e)
         {
-            using MMDeviceEnumerator deviceEnumerator = new MMDeviceEnumerator();
+            using MMDeviceEnumerator deviceEnumerator = new();
             MMDevice defaultPlaybackDevice;
             try
             {

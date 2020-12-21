@@ -93,11 +93,17 @@ namespace CYKViewer
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            using HttpClient client = new();
-            // Check for the app's update
             Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            Debug.WriteLine($"The client's version is {currentVersion.ToString(3)}");
+            // Load the settings first, so it doesn't need to wait for the update logic to finish
+            // in case it's slow to load data from GitHub
+            _settings = await ReadSettings();
+            _settings.ClientVersion = currentVersion.ToString(3);
+            _settings.PropertyChanged += UpdateSettingsFile;
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, "https://api.github.com/repos/Gnbrkm41/CYKViewer/releases/latest");
+            Debug.WriteLine("Checking for updates");
+            using HttpClient client = new();
+            HttpRequestMessage request = new(HttpMethod.Get, "https://api.github.com/repos/Gnbrkm41/CYKViewer/releases/latest");
             request.Headers.Add("User-Agent", $"Gnbrkm41-CYKViewer-v" + currentVersion.ToString(3));
             request.Headers.Add("Accept", "application/vnd.github.v3+json");
 
@@ -105,7 +111,7 @@ namespace CYKViewer
             try
             {
                 HttpResponseMessage response = await client.SendAsync(request);
-                response.EnsureSuccessStatusCode();
+                _ = response.EnsureSuccessStatusCode();
                 GithubRelease deserializedResponse = await response.Content.ReadFromJsonAsync<GithubRelease>();
                 string latestRelease = deserializedResponse.TagName;
                 latestVersion = new Version(latestRelease.TrimStart('v'));
@@ -168,12 +174,9 @@ namespace CYKViewer
                     await File.WriteAllTextAsync(s_scriptPath, onlineScript);
                 }
                 Debug.WriteLine("Update logic complete.");
+
+                _settings.LocalizationPatchVersion = scriptVersion;
             }
-
-            _settings = await ReadSettings();
-
-            _settings.LocalizationPatchVersion = scriptVersion;
-            _settings.PropertyChanged += UpdateSettingsFile;
         }
 
         private static async Task<Settings> ReadSettings()
@@ -203,6 +206,12 @@ namespace CYKViewer
 
         private async void UpdateSettingsFile(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            // TODO: Pull the non-config data like the patch version out to a separate type?
+            if (e.PropertyName == "LocalizationPatchVersion")
+            {
+                return;
+            }
+
             // Don't care what exactly changed - just serialize the object then save it to the path.
             string settingsJson = JsonSerializer.Serialize(_settings, s_serializerOptions);
             await File.WriteAllTextAsync(s_settingsPath, settingsJson);

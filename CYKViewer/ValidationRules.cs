@@ -18,7 +18,7 @@ namespace CYKViewer
                 return new ValidationResult(false, $"Value is not a string, type: {value.GetType()}");
             }
 
-            if (!Uri.TryCreate(str, UriKind.Absolute, out Uri uri))
+            if (!Uri.TryCreate(str, UriKind.Absolute, out _))
             {
                 return new ValidationResult(false, "Provided URL is not a valid absolute URL");
             }
@@ -31,7 +31,7 @@ namespace CYKViewer
     {
         public override ValidationResult Validate(object value, CultureInfo cultureInfo)
         {
-            if (value is not string str)
+            if (value is not string)
             {
                 return new ValidationResult(false, $"Value is not a string, type: {value.GetType()}");
             }
