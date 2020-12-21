@@ -1,25 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
@@ -49,7 +38,7 @@ namespace CYKViewer
             InitializeComponent();
 
             _settings = settings;
-            settingsPanel.DataContext = _settings;
+            sidePanel.DataContext = _settings;
             ParentWindow = parentWindow;
             CoreWebView2CreationProperties props = new()
             {
@@ -138,9 +127,10 @@ $@"(function()
             file.Close();
         }
 
-        private void ApplyKoreanPatchOnInitialLoad(object sender, CoreWebView2InitializationCompletedEventArgs e)
+        private void PrepareLocalizationPatchOnInitialLoad(object sender, CoreWebView2InitializationCompletedEventArgs e)
         {
             webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
+            webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
 
             if (!e.IsSuccess)
             {
@@ -347,6 +337,54 @@ $@"(function()
                 manager?.Dispose();
                 webView2Session?.Dispose();
             }
+        }
+
+        private void ResolutionSelectionChanged(object sender, DataTransferEventArgs e)
+        {
+            GameScreenSize value = (GameScreenSize)resolutionSelectionComboBox.SelectedItem;
+            if (double.IsNaN(value.Multiplier))
+            {
+                // Set to auto-fit
+                webViewBorder.Width = double.NaN;
+                webViewBorder.Height = double.NaN;
+                ParentWindow.MinWidth = 300;
+                ParentWindow.MinHeight = 0;
+                webViewBorder.HorizontalAlignment = HorizontalAlignment.Stretch;
+                webViewBorder.VerticalAlignment = VerticalAlignment.Stretch;
+            }
+            else
+            {
+                // There's a weird discrepancy between the window size and the actual control's size. 16 is the *correct* offset
+                // for the window to be fully visible.
+                ParentWindow.MinWidth = value.Width + 16;
+                ParentWindow.MinHeight = value.Height + 60;
+                webViewBorder.Width = value.Width;
+                webViewBorder.Height = value.Height;
+                webViewBorder.HorizontalAlignment = HorizontalAlignment.Left;
+                webViewBorder.VerticalAlignment = VerticalAlignment.Top;
+            }
+        }
+    }
+
+    public class GameScreenSize
+    {
+        public GameScreenSize() : this(1d) { }
+        public GameScreenSize(double multiplier)
+        {
+            Multiplier = multiplier;
+        }
+
+        public double Multiplier { get; set; }
+        [JsonIgnore]
+        public int Width => (int)(1136 * Multiplier);
+        [JsonIgnore]
+        public int Height => (int)(640 * Multiplier);
+
+        public override string ToString()
+        {
+            return double.IsNaN(Multiplier) ?
+                "화면 맞춤" :
+                $"{Multiplier:P0} ({Width} * {Height})";
         }
     }
 

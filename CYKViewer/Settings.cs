@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
+﻿using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace CYKViewer
 {
@@ -19,7 +13,7 @@ namespace CYKViewer
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public bool _enableKoreanPatch;
+        private bool _enableKoreanPatch;
         public bool EnableKoreanPatch
         {
             get => _enableKoreanPatch;
@@ -37,6 +31,18 @@ namespace CYKViewer
             set
             {
                 _screenshotSavePath = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // Property added in version 1.0.3
+        private GameScreenSize _gameScreenSize;
+        public GameScreenSize GameScreenSize
+        {
+            get => _gameScreenSize;
+            set
+            {
+                _gameScreenSize = value;
                 NotifyPropertyChanged();
             }
         }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -7,23 +6,12 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Reflection;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-
-using Microsoft.Web.WebView2.Core;
-using Microsoft.Web.WebView2.WinForms;
 
 namespace CYKViewer
 {
@@ -40,7 +28,12 @@ namespace CYKViewer
         private static readonly string s_settingsPath =
             System.IO.Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CYKViewer", "settings.json");
 
-        private Settings _settings;
+        private static readonly JsonSerializerOptions s_serializerOptions = new()
+        {
+            NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
+        };
+
+    private Settings _settings;
         public ObservableCollection<string> Profiles { get; set; } = new ObservableCollection<string>();
 
         public StartupPage(MainWindow parentWindow) : this()
@@ -177,28 +170,41 @@ namespace CYKViewer
                 Debug.WriteLine("Update logic complete.");
             }
 
+            _settings = await ReadSettings();
+
+            _settings.LocalizationPatchVersion = scriptVersion;
+            _settings.PropertyChanged += UpdateSettingsFile;
+        }
+
+        private static async Task<Settings> ReadSettings()
+        {
+            Settings settings;
             // Look for a configuration file.
             if (File.Exists(s_settingsPath))
             {
                 string settingsJson = await File.ReadAllTextAsync(s_settingsPath);
-                _settings = JsonSerializer.Deserialize<Settings>(settingsJson);
+                settings = JsonSerializer.Deserialize<Settings>(settingsJson, s_serializerOptions);
+
+                // Added in 1.0.3 - if null (does not exist), set a default value of 1.0x
+                settings.GameScreenSize ??= new GameScreenSize(1.0);
             }
             else
             {
-                _settings = new Settings
+                settings = new Settings
                 {
                     EnableKoreanPatch = true,
-                    ScreenshotSavePath = System.IO.Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "CYKViewer")
+                    ScreenshotSavePath = System.IO.Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "CYKViewer"),
+                    GameScreenSize = new GameScreenSize(1.0)
                 };
             }
-            _settings.LocalizationPatchVersion = scriptVersion;
-            _settings.PropertyChanged += UpdateSettingsFile;
+
+            return settings;
         }
 
         private async void UpdateSettingsFile(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // Don't care what exactly changed - just serialize the object then save it to the path.
-            string settingsJson = JsonSerializer.Serialize(_settings);
+            string settingsJson = JsonSerializer.Serialize(_settings, s_serializerOptions);
             await File.WriteAllTextAsync(s_settingsPath, settingsJson);
         }
 

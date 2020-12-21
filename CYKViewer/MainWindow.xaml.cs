@@ -1,26 +1,8 @@
 ﻿using System;
-using System.Buffers.Text;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Controls.Primitives;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Documents.DocumentStructures;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-using Microsoft.Web.WebView2.Core;
-using Microsoft.Win32;
 using WindowPlacementNameSpace;
 
 namespace CYKViewer
@@ -36,12 +18,14 @@ namespace CYKViewer
             _ = PageFrame.Navigate(new StartupPage(this));
         }
 
-        ///This method is save the actual position of the window to file "WindowName.pos"
+
+        // https://stackoverflow.com/a/53817880
+        // This method is save the actual position of the window to file "WindowName.pos"
         private void ClosingTrigger(object sender, EventArgs e)
         {
             this.SavePlacement();
         }
-        ///This method is load the actual position of the window from the file
+        // This method is load the actual position of the window from the file
         protected override void OnSourceInitialized(EventArgs e)
         {
             base.OnSourceInitialized(e);
@@ -49,6 +33,7 @@ namespace CYKViewer
         }
     }
 
+    // https://stackoverflow.com/a/11037082
     public static class DisableNavigation
     {
         public static bool GetDisable(DependencyObject o)
