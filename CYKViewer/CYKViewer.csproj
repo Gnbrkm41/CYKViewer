@@ -4,11 +4,10 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
-    <PackageIcon>14d6c6ee1ba9c45b1ad094a4c7dba1ff4753e5e3adb3cef8a9ae553151dd58c4.png</PackageIcon>
     <ApplicationIcon>icon_49.ico</ApplicationIcon>
     <Authors>Gnbrkm41</Authors>
     <Product>CYKViewer</Product>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
   </PropertyGroup>
 
   <ItemGroup>
