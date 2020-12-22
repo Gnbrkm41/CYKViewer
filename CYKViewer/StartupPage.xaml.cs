@@ -229,6 +229,29 @@ namespace CYKViewer
             };
             Process.Start(info).Dispose();
         }
+
+        private void AddNewEntryOnEnter(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key != System.Windows.Input.Key.Enter && e.Key != System.Windows.Input.Key.Return)
+            {
+                return;
+            }
+
+            var illegalChars = System.IO.Path.GetInvalidFileNameChars();
+            string profileName = profileNameTextBox.Text;
+            if (string.IsNullOrWhiteSpace(profileName))
+            {
+                return;
+            }
+
+            if (profileName.Intersect(illegalChars).Any())
+            {
+                return;
+            }
+
+            Profiles.Add(profileNameTextBox.Text);
+            profileNameTextBox.Clear();
+        }
     }
 
     class GithubRelease
