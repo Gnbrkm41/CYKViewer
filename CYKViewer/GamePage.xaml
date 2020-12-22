@@ -78,6 +78,9 @@
                     <local:GameScreenSize Multiplier="2" />
                     <local:GameScreenSize Multiplier="NaN" />
                 </ComboBox>
+                <TextBlock Margin="0 7 0 0">패치 스크립트 업데이트 주소</TextBlock>
+                <TextBox Margin="0 4 0 0" Name="scriptUpdateUrlTextBox" Text="{Binding ScriptUpdateUrl, Mode=TwoWay}"  KeyDown="DetectEnterAndUpdate" />
+                <Button Margin="0 2 0 0" Name="scriptUpdateButton" Click="ForceUpdateScript">강제 업데이트 (새로고침 후 적용)</Button>
             </StackPanel>
         </Grid>
     </DockPanel>

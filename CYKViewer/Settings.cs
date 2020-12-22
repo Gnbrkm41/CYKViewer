@@ -47,6 +47,20 @@ namespace CYKViewer
             }
         }
 
+        // Property added in version 1.0.4
+        private string _scriptUpdateUrl;
+        public string ScriptUpdateUrl
+        {
+            get => _scriptUpdateUrl;
+            set
+            {
+                _scriptUpdateUrl = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        // Those below are not configuration data
+
         private string _localizationPatchVersion;
         [JsonIgnore]
         public string LocalizationPatchVersion

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -23,7 +25,7 @@ namespace CYKViewer
     /// </summary>
     public partial class GamePage : Page
     {
-        private static readonly string scriptPath =
+        private static readonly string s_scriptPath =
             System.IO.Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CYKViewer", "localization.js");
 
         private MenuEntry _commsExtraction;
@@ -180,7 +182,7 @@ $@"(function()
             string script = null;
             try
             {
-                script = File.ReadAllText(scriptPath);
+                script = File.ReadAllText(s_scriptPath);
             }
             catch (IOException ex)
             {
@@ -362,6 +364,55 @@ $@"(function()
                 webViewBorder.Height = value.Height;
                 webViewBorder.HorizontalAlignment = HorizontalAlignment.Left;
                 webViewBorder.VerticalAlignment = VerticalAlignment.Top;
+            }
+        }
+
+        private async void ForceUpdateScript(object sender, RoutedEventArgs e)
+        {
+            if (!Uri.TryCreate(scriptUpdateUrlTextBox.Text, UriKind.Absolute, out Uri updateUrl))
+            {
+                statusBarTextBlock.Text = "스크립트 업데이트 실패: 제공된 주소가 올바르지 않습니다.";
+                _statusBarTimer.Start();
+                return;
+            }
+
+            using HttpClient client = new();
+            string script = null;
+            try
+            {
+                script = await client.GetStringAsync(updateUrl);
+            }
+            catch (Exception ex)
+            {
+                statusBarTextBlock.Text = $"스크립트 업데이트 실패 (서버 연결 실패): {ex.Message}";
+                _statusBarTimer.Start();
+                return;
+            }
+
+            try
+            {
+                await File.WriteAllTextAsync(s_scriptPath, script);
+            }
+            catch (IOException ex)
+            {
+                statusBarTextBlock.Text = $"스크립트 업데이트 실패 (파일 저장 실패): {ex.Message}";
+                _statusBarTimer.Start();
+                return;
+            }
+
+            Match scriptVersionMatch = Regex.Match(script, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
+            if (scriptVersionMatch.Success)
+            {
+                string versionString = scriptVersionMatch.Groups["version"].Value;
+                _settings.LocalizationPatchVersion = versionString;
+
+                statusBarTextBlock.Text = $"스크립트 업데이트 성공 (새로고침 후 적용됩니다)";
+                _statusBarTimer.Start();
+            }
+            else
+            {
+                statusBarTextBlock.Text = $"스크립트 업데이트 경고: 스크립트 버전이 확인되지 않았습니다. 오작동의 우려가 있습니다";
+                _statusBarTimer.Start();
             }
         }
     }

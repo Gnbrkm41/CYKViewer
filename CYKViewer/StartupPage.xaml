@@ -32,8 +32,8 @@
                     <TextBlock>Blip</TextBlock>
                 </d:ListView.Items>
             </ListView>
-            <TextBox Name="profileNameTextBox"  Grid.Row="1" Margin="0 2 2 0" />
-            <Button Name="registerNewProfileButton" Grid.Row="1" Margin="0 2 0 0" Grid.Column="1" Click="AddProfileButton_Click">등록</Button>
+            <TextBox Name="profileNameTextBox"  Grid.Row="1" Margin="0 2 2 0" KeyDown="AddNewEntryOnEnter"/>
+            <Button Name="registerNewProfileButton" Grid.Row="1" Margin="0 2 0 0" Grid.Column="1">등록</Button>
             <Button Name="startButton" Grid.Row="2" Margin="0 2 0 0" Grid.ColumnSpan="2" Click="StartRequested">시작</Button>
         </Grid>
         <Border Grid.Column="1" Height="50" VerticalAlignment="Bottom" Margin="10">

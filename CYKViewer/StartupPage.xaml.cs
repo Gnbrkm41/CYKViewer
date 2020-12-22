@@ -134,7 +134,7 @@ namespace CYKViewer
             string onlineScript = null;
             try
             {
-                onlineScript = await client.GetStringAsync("https://newbiepr.github.io/Temporary_KRTL/ShinyColors.user.js");
+                onlineScript = await client.GetStringAsync(_settings.ScriptUpdateUrl);
             }
             catch (HttpRequestException ex)
             {
@@ -190,6 +190,9 @@ namespace CYKViewer
 
                 // Added in 1.0.3 - if null (does not exist), set a default value of 1.0x
                 settings.GameScreenSize ??= new GameScreenSize(1.0);
+
+                // Added in 1.0.4 - if null (does not exist), set the default value to the GitHub update link
+                settings.ScriptUpdateUrl ??= "https://newbiepr.github.io/Temporary_KRTL/ShinyColors.user.js";
             }
             else
             {
@@ -197,7 +200,8 @@ namespace CYKViewer
                 {
                     EnableKoreanPatch = true,
                     ScreenshotSavePath = System.IO.Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "CYKViewer"),
-                    GameScreenSize = new GameScreenSize(1.0)
+                    GameScreenSize = new GameScreenSize(1.0),
+                    ScriptUpdateUrl = "https://newbiepr.github.io/Temporary_KRTL/ShinyColors.user.js"
                 };
             }
 
