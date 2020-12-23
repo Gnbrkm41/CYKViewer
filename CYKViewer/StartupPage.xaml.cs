@@ -152,7 +152,7 @@ namespace CYKViewer
                 if (File.Exists(s_scriptPath))
                 {
                     string existingScript = await File.ReadAllTextAsync(s_scriptPath);
-                    var existingMatch = Regex.Match(existingScript, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
+                    Match existingMatch = Regex.Match(existingScript, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
                     string existingVersionString = existingMatch.Groups["version"].Value;
                     Debug.WriteLine($"The version of the offline script is {existingVersionString}");
                     onlineIsNewer = new Version(onlineVersionString) > new Version(existingVersionString);
@@ -172,6 +172,13 @@ namespace CYKViewer
                     // The online script is newer, updating...
                     Debug.WriteLine($"Updating the script...");
                     await File.WriteAllTextAsync(s_scriptPath, onlineScript);
+
+                    // When updating, also change the update URL.
+                    Match updateUrlMatch = Regex.Match(onlineScript, @"^\s*\/\/\s*@updateURL\s*(?<updateUrl>.*?)\s*$", RegexOptions.Multiline);
+                    if (updateUrlMatch.Success)
+                    {
+                        _settings.ScriptUpdateUrl = updateUrlMatch.Groups["updateURL"].Value;
+                    }
                 }
                 Debug.WriteLine("Update logic complete.");
 
@@ -192,7 +199,7 @@ namespace CYKViewer
                 settings.GameScreenSize ??= new GameScreenSize(1.0);
 
                 // Added in 1.0.4 - if null (does not exist), set the default value to the GitHub update link
-                settings.ScriptUpdateUrl ??= "https://newbiepr.github.io/Temporary_KRTL/ShinyColors.user.js";
+                settings.ScriptUpdateUrl ??= "https://shinymaskr.ga/ShinyColors.user.js";
             }
             else
             {
@@ -201,7 +208,7 @@ namespace CYKViewer
                     EnableKoreanPatch = true,
                     ScreenshotSavePath = System.IO.Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "CYKViewer"),
                     GameScreenSize = new GameScreenSize(1.0),
-                    ScriptUpdateUrl = "https://newbiepr.github.io/Temporary_KRTL/ShinyColors.user.js"
+                    ScriptUpdateUrl = "https://shinymaskr.ga/ShinyColors.user.js"
                 };
             }
 
