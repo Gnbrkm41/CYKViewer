@@ -437,6 +437,23 @@ $@"(function()
                 _statusBarTimer.Stop();
                 _statusBarTimer.Start();
             }
+
+            // When updating, also change the update URL.
+            Match updateUrlMatch = Regex.Match(script, @"^\s*\/\/\s*@updateURL\s*(?<updateUrl>.*?)\s*$", RegexOptions.Multiline);
+            if (updateUrlMatch.Success)
+            {
+                Group updateUrlGroup = updateUrlMatch.Groups["updateUrl"];
+
+                if (updateUrlGroup.Success && Uri.TryCreate(updateUrlGroup.Value, UriKind.Absolute, out _))
+                {
+                    _settings.ScriptUpdateUrl = updateUrlGroup.Value;
+                }
+                else
+                {
+                    // no clue what to do if it's invalid.
+                    Debug.WriteLine($"Failed to obtain a valid URL from the new script: {updateUrlGroup.Value}");
+                }
+            }
         }
     }
 
