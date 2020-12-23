@@ -177,7 +177,7 @@ namespace CYKViewer
                     Match updateUrlMatch = Regex.Match(onlineScript, @"^\s*\/\/\s*@updateURL\s*(?<updateUrl>.*?)\s*$", RegexOptions.Multiline);
                     if (updateUrlMatch.Success)
                     {
-                        _settings.ScriptUpdateUrl = updateUrlMatch.Groups["updateURL"].Value;
+                        _settings.ScriptUpdateUrl = updateUrlMatch.Groups["updateUrl"].Value;
                     }
                 }
                 Debug.WriteLine("Update logic complete.");
