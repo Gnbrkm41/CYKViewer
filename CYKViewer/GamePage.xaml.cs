@@ -32,7 +32,7 @@ namespace CYKViewer
         private MenuEntry _enableBgm;
 
         private readonly Settings _settings;
-        private readonly System.Timers.Timer _statusBarTimer = new(10000);
+        private readonly System.Timers.Timer _statusBarTimer = new(10000) { AutoReset = false, Enabled = false };
         public MainWindow ParentWindow { get; set; }
 
         public GamePage(MainWindow parentWindow, string userDataFolder, Settings settings)
@@ -97,6 +97,7 @@ $@"(function()
             catch (Exception ex)
             {
                 statusBarTextBlock.Text = $"스크린샷 저장 실패: {ex.Message}";
+                _statusBarTimer.Stop();
                 _statusBarTimer.Start();
                 return;
             }
@@ -116,6 +117,7 @@ $@"(function()
                 catch (Exception ex)
                 {
                     statusBarTextBlock.Text = $"스크린샷 저장 실패: {ex.Message}";
+                    _statusBarTimer.Stop();
                     _statusBarTimer.Start();
                     return;
                 }
@@ -125,6 +127,7 @@ $@"(function()
             statusBarTextBlock.Text = $"스크린샷 저장 완료: {file.Name}";
 
             // Reset the content of the status bar after 10 seconds
+            _statusBarTimer.Stop();
             _statusBarTimer.Start();
             file.Close();
         }
@@ -373,6 +376,7 @@ $@"(function()
             if (!Uri.TryCreate(scriptUpdateUrlTextBox.Text, UriKind.Absolute, out Uri updateUrl))
             {
                 statusBarTextBlock.Text = "스크립트 업데이트 실패: 제공된 주소가 올바르지 않습니다.";
+                _statusBarTimer.Stop();
                 _statusBarTimer.Start();
                 return;
             }
@@ -386,18 +390,21 @@ $@"(function()
             catch (HttpRequestException hrEx)
             {
                 statusBarTextBlock.Text = $"스크립트 업데이트 실패 (서버 연결 실패): {hrEx.Message}";
+                _statusBarTimer.Stop();
                 _statusBarTimer.Start();
                 return;
             }
             catch (TaskCanceledException tcEx)
             {
                 statusBarTextBlock.Text = $"스크립트 업데이트 실패 (연결 중 시간 초과): {tcEx.Message}";
+                _statusBarTimer.Stop();
                 _statusBarTimer.Start();
                 return;
             }
             catch (Exception ex)
             {
                 statusBarTextBlock.Text = $"스크립트 업데이트 실패: {ex.Message}";
+                _statusBarTimer.Stop();
                 _statusBarTimer.Start();
                 return;
             }
@@ -409,6 +416,7 @@ $@"(function()
             catch (IOException ex)
             {
                 statusBarTextBlock.Text = $"스크립트 업데이트 실패 (파일 저장 실패): {ex.Message}";
+                _statusBarTimer.Stop();
                 _statusBarTimer.Start();
                 return;
             }
@@ -420,11 +428,13 @@ $@"(function()
                 _settings.LocalizationPatchVersion = versionString;
 
                 statusBarTextBlock.Text = $"스크립트 업데이트 성공 (새로고침 후 적용됩니다)";
+                _statusBarTimer.Stop();
                 _statusBarTimer.Start();
             }
             else
             {
                 statusBarTextBlock.Text = $"스크립트 업데이트 경고: 스크립트 버전이 확인되지 않았습니다. 오작동의 우려가 있습니다";
+                _statusBarTimer.Stop();
                 _statusBarTimer.Start();
             }
         }
