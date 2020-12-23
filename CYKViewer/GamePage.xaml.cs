@@ -273,7 +273,7 @@ $@"(function()
             if (result != CommonFileDialogResult.Ok)
                 return;
 
-            screenshotDirTextBox.Text = dialog.FileName;
+            _settings.ScreenshotSavePath = dialog.FileName;
         }
 
         private void Refresh(object sender, RoutedEventArgs e)
