@@ -145,11 +145,12 @@ namespace CYKViewer
             }
             catch (HttpRequestException hrEx)
             {
+                _ = MessageBox.Show(_parentWindow, $"패치 스크립트 업데이트에 실패했습니다. {Environment.NewLine}주소: {_settings.ScriptUpdateUrl}{Environment.NewLine}메시지: {hrEx}", "업데이트 중 오류 발생");
                 Debug.WriteLine($"Script update check failed: {hrEx}");
             }
             catch (InvalidOperationException ioEx)
             {
-                _ = MessageBox.Show(_parentWindow, $"패치 업데이트 주소가 올바르지 않습니다. {Environment.NewLine}주소: {_settings.ScriptUpdateUrl}{Environment.NewLine}메시지: {ioEx}", "업데이트 중 오류 발생");
+                _ = MessageBox.Show(_parentWindow, $"패치 스크립트 업데이트 주소가 올바르지 않습니다. {Environment.NewLine}주소: {_settings.ScriptUpdateUrl}{Environment.NewLine}메시지: {ioEx}", "업데이트 중 오류 발생");
             }
             catch (TaskCanceledException tcEx)
             {
@@ -208,9 +209,9 @@ namespace CYKViewer
                     }
                 }
                 Debug.WriteLine("Update logic complete.");
-
-                _settings.LocalizationPatchVersion = scriptVersion ?? "알 수 없음";
             }
+
+            _settings.LocalizationPatchVersion = string.IsNullOrWhiteSpace(scriptVersion) ? "알 수 없음" : scriptVersion;
         }
 
         private static async Task<Settings> ReadSettings()
