@@ -133,6 +133,7 @@ namespace CYKViewer
                 if (latestVersion > currentVersion)
                 {
                     openReleasesPageButton.Visibility = Visibility.Visible;
+                    _settings.ClientVersion += " (업데이트 가능)";
                 }
             }
 

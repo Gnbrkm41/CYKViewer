@@ -73,7 +73,16 @@ namespace CYKViewer
             }
         }
 
+        private string _clientVersion;
         [JsonIgnore]
-        public string ClientVersion { get; set; }
+        public string ClientVersion
+        {
+            get => _clientVersion;
+            set
+            {
+                _clientVersion = value;
+                NotifyPropertyChanged();
+            }
+        }
     }
 }
