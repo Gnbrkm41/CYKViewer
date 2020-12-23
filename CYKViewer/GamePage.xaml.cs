@@ -369,6 +369,7 @@ $@"(function()
 
         private async void ForceUpdateScript(object sender, RoutedEventArgs e)
         {
+            statusBarTextBlock.Text = "패치 스크립트 업데이트 확인 중...";
             if (!Uri.TryCreate(scriptUpdateUrlTextBox.Text, UriKind.Absolute, out Uri updateUrl))
             {
                 statusBarTextBlock.Text = "스크립트 업데이트 실패: 제공된 주소가 올바르지 않습니다.";
@@ -382,9 +383,21 @@ $@"(function()
             {
                 script = await client.GetStringAsync(updateUrl);
             }
+            catch (HttpRequestException hrEx)
+            {
+                statusBarTextBlock.Text = $"스크립트 업데이트 실패 (서버 연결 실패): {hrEx.Message}";
+                _statusBarTimer.Start();
+                return;
+            }
+            catch (TaskCanceledException tcEx)
+            {
+                statusBarTextBlock.Text = $"스크립트 업데이트 실패 (연결 중 시간 초과): {tcEx.Message}";
+                _statusBarTimer.Start();
+                return;
+            }
             catch (Exception ex)
             {
-                statusBarTextBlock.Text = $"스크립트 업데이트 실패 (서버 연결 실패): {ex.Message}";
+                statusBarTextBlock.Text = $"스크립트 업데이트 실패: {ex.Message}";
                 _statusBarTimer.Start();
                 return;
             }

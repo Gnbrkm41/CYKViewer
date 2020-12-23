@@ -120,6 +120,12 @@ namespace CYKViewer
             {
                 Debug.WriteLine($"Update check failed: {ex}");
             }
+            catch (TaskCanceledException tcEx)
+            {
+                // Timeout (100s). Not sure what to do about it - it's unlikely, but we don't want to crash the app
+                // Maybe it'll succeed next time. For now, let's ignore
+                Debug.WriteLine($"Timeout while checking for client updates: {tcEx}");
+            }
 
             if (latestVersion != null)
             {
@@ -136,9 +142,19 @@ namespace CYKViewer
             {
                 onlineScript = await client.GetStringAsync(_settings.ScriptUpdateUrl);
             }
-            catch (HttpRequestException ex)
+            catch (HttpRequestException hrEx)
             {
-                Debug.WriteLine($"Script update check failed: {ex}");
+                Debug.WriteLine($"Script update check failed: {hrEx}");
+            }
+            catch (InvalidOperationException ioEx)
+            {
+                _ = MessageBox.Show(_parentWindow, $"패치 업데이트 주소가 올바르지 않습니다. {Environment.NewLine}주소: {_settings.ScriptUpdateUrl}{Environment.NewLine}메시지: {ioEx}", "업데이트 중 오류 발생");
+            }
+            catch (TaskCanceledException tcEx)
+            {
+                // Timeout (100s). Not sure what to do about it - it's unlikely, but we don't want to crash the app
+                // Maybe it'll succeed next time. For now, let's ignore
+                Debug.WriteLine($"Timeout while checking for script updates: {tcEx}");
             }
 
             string scriptVersion = null;
@@ -177,12 +193,22 @@ namespace CYKViewer
                     Match updateUrlMatch = Regex.Match(onlineScript, @"^\s*\/\/\s*@updateURL\s*(?<updateUrl>.*?)\s*$", RegexOptions.Multiline);
                     if (updateUrlMatch.Success)
                     {
-                        _settings.ScriptUpdateUrl = updateUrlMatch.Groups["updateUrl"].Value;
+                        Group updateUrlGroup = updateUrlMatch.Groups["updateUrl"];
+                        
+                        if (updateUrlGroup.Success && Uri.TryCreate(updateUrlGroup.Value, UriKind.Absolute, out _))
+                        {
+                            _settings.ScriptUpdateUrl = updateUrlGroup.Value;
+                        }
+                        else
+                        {
+                            // no clue what to do if it's invalid.
+                            Debug.WriteLine($"Failed to obtain a valid URL from the new script: {updateUrlGroup.Value}");
+                        }
                     }
                 }
                 Debug.WriteLine("Update logic complete.");
 
-                _settings.LocalizationPatchVersion = scriptVersion;
+                _settings.LocalizationPatchVersion = scriptVersion ?? "알 수 없음";
             }
         }
 
