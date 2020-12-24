@@ -352,7 +352,7 @@ $@"(function()
                 // Set to auto-fit
                 webViewBorder.Width = double.NaN;
                 webViewBorder.Height = double.NaN;
-                ParentWindow.MinWidth = 300;
+                ParentWindow.MinWidth = 306;
                 ParentWindow.MinHeight = 0;
                 webViewBorder.HorizontalAlignment = HorizontalAlignment.Stretch;
                 webViewBorder.VerticalAlignment = VerticalAlignment.Stretch;
@@ -361,7 +361,8 @@ $@"(function()
             {
                 // There's a weird discrepancy between the window size and the actual control's size. 16 is the *correct* offset
                 // for the window to be fully visible.
-                ParentWindow.MinWidth = value.Width + 16;
+                // The 306 offset is for the menu to be fully visible (300 for the panel itself, 6 for the margin)
+                ParentWindow.MinWidth = value.Width + 16 + 306;
                 ParentWindow.MinHeight = value.Height + 60;
                 webViewBorder.Width = value.Width;
                 webViewBorder.Height = value.Height;
