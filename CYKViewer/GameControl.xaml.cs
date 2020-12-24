@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text.Json.Serialization;
@@ -15,15 +16,16 @@ using System.Windows.Input;
 using Microsoft.Web.WebView2.Core;
 using Microsoft.Web.WebView2.Wpf;
 using Microsoft.WindowsAPICodePack.Dialogs;
+using Microsoft.WindowsAPICodePack.Shell.Interop;
 
 using NAudio.CoreAudioApi;
 
 namespace CYKViewer
 {
     /// <summary>
-    /// Interaction logic for GamePage.xaml
+    /// Interaction logic for GameControl.xaml
     /// </summary>
-    public partial class GamePage : Page
+    public partial class GameControl : UserControl
     {
         private static readonly string s_scriptPath =
             System.IO.Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "CYKViewer", "localization.js");
@@ -35,7 +37,7 @@ namespace CYKViewer
         private readonly System.Timers.Timer _statusBarTimer = new(10000) { AutoReset = false, Enabled = false };
         public MainWindow ParentWindow { get; set; }
 
-        public GamePage(MainWindow parentWindow, string userDataFolder, Settings settings)
+        public GameControl(MainWindow parentWindow, string userDataFolder, Settings settings)
         {
             InitializeComponent();
 
@@ -227,7 +229,7 @@ $@"(function()
             ParentWindow.Topmost = button.IsChecked == true;
         }
 
-        private void Page_KeyDown(object sender, KeyEventArgs e)
+        private void Control_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.F5 || e.Key == Key.BrowserRefresh)
             {
@@ -456,8 +458,19 @@ $@"(function()
                 }
             }
         }
-    }
 
+        private void ReturnToProfileSelection(object sender, RoutedEventArgs e)
+        {
+            MessageBoxResult result = MessageBox.Show(ParentWindow, "정말 프로필 선택으로 돌아갑니까?", "확인", MessageBoxButton.YesNo);
+            if (result != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            _ = ParentWindow.Content = new StartupControl(ParentWindow);
+            webView.Dispose();
+        }
+    }
     public class GameScreenSize
     {
         public GameScreenSize() : this(1d) { }

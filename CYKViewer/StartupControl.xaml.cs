@@ -16,9 +16,9 @@ using System.Windows.Controls;
 namespace CYKViewer
 {
     /// <summary>
-    /// Interaction logic for StartupPage.xaml
+    /// Interaction logic for StartupControl.xaml
     /// </summary>
-    public partial class StartupPage : Page
+    public partial class StartupControl : UserControl
     {
         private readonly MainWindow _parentWindow;
         private static readonly string s_userDataRootDirectory =
@@ -33,15 +33,15 @@ namespace CYKViewer
             NumberHandling = JsonNumberHandling.AllowNamedFloatingPointLiterals
         };
 
-    private Settings _settings;
+        private Settings _settings;
         public ObservableCollection<string> Profiles { get; set; } = new ObservableCollection<string>();
 
-        public StartupPage(MainWindow parentWindow) : this()
+        public StartupControl(MainWindow parentWindow) : this()
         {
             _parentWindow = parentWindow;
         }
 
-        public StartupPage()
+        public StartupControl()
         {
             InitializeComponent();
             DirectoryInfo directoryInfo = new(s_userDataRootDirectory);
@@ -87,11 +87,11 @@ namespace CYKViewer
             // Ensure selection doesn't contain illegal characters.
             string pathToAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string userFolderPath = System.IO.Path.Join(pathToAppData, "CYKViewer", "userData", selection);
-            GamePage gamePage = new(_parentWindow, userFolderPath, _settings);
-            _ = _parentWindow.PageFrame.Navigate(gamePage);
+            GameControl gameControl = new(_parentWindow, userFolderPath, _settings);
+            _ = _parentWindow.Content = gameControl;
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void ControlLoaded(object sender, RoutedEventArgs e)
         {
             Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
             Debug.WriteLine($"The client's version is {currentVersion.ToString(3)}");
@@ -196,7 +196,7 @@ namespace CYKViewer
                     if (updateUrlMatch.Success)
                     {
                         Group updateUrlGroup = updateUrlMatch.Groups["updateUrl"];
-                        
+
                         if (updateUrlGroup.Success && Uri.TryCreate(updateUrlGroup.Value, UriKind.Absolute, out _))
                         {
                             _settings.ScriptUpdateUrl = updateUrlGroup.Value;
@@ -288,7 +288,6 @@ namespace CYKViewer
             profileNameTextBox.Clear();
         }
     }
-
     class GithubRelease
     {
         [JsonPropertyName("url")]
