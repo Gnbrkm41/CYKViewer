@@ -19,69 +19,66 @@
                 <ColumnDefinition Width="*" Name="webViewColumnDefinition"/>
                 <ColumnDefinition Width="Auto" Name="menuColumnDefinition"/>
             </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition />
-            </Grid.RowDefinitions>
             <!--The binding is a workaround to a weirdness in the WebView2 control, as it goes invisible if the height and the width is set to auto-->
-            <Border Name="webViewBorder" Grid.Column="0" Grid.RowSpan="2" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+            <Border Name="webViewBorder" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <wv2:WebView2 Width="{Binding Path=ActualWidth, ElementName=webViewBorder}" Height="{Binding Path=ActualHeight, ElementName=webViewBorder}" Name="webView" d:Source="https://bing.com"
                         CoreWebView2InitializationCompleted="PrepareLocalizationPatchOnInitialLoad" WebMessageReceived="DebugMessageReceived" NavigationStarting="OnNavigationStart" HorizontalAlignment="Left"/>
             </Border>
+            <ScrollViewer Grid.Column="1" Width="306" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Name="sidePanel" Width="Auto" Grid.Column="1" Orientation="Vertical" Margin="3 0 3 3">
+                    <StackPanel.Resources>
+                        <local:GameScreenSizeToDoubleConverter x:Key="GameScreenSizeToDoubleConverter" />
+                    </StackPanel.Resources>
 
-            <StackPanel Name="sidePanel" Width="300" Grid.Column="1" Orientation="Vertical" Margin="3 0 3 3">
-                <StackPanel.Resources>
-                    <local:GameScreenSizeToDoubleConverter x:Key="GameScreenSizeToDoubleConverter" />
-                </StackPanel.Resources>
+                    <Button Name="captureButton" Width="Auto" Height="60" Click="CaptureButton_Click">캡처</Button>
+                    <Button Name="bgmButton" Margin="0 2 0 0" Height="30" IsEnabled="False">BGM</Button>
+                    <Button Name="extractButton" Margin="0 2 0 0" Height="30" IsEnabled="False">추출</Button>
+                    <ToggleButton Name="alwaysOnTopButton" Margin="0 2 0 0" Height="30" Click="ConfigureAlwaysOnTop">항상 위에</ToggleButton>
+                    <ToggleButton Name="muteButton" Margin="0 2 0 0" Height="30" Click="ChangeWebViewMuteStatus">음소거</ToggleButton>
+                    <Button Margin="0 2 0 0" Height="30" Name="returnToProfileSelectionButton" Click="ReturnToProfileSelection">프로필 선택으로 돌아가기</Button>
+                    <TextBlock Margin="0 7 0 4">현재 주소</TextBlock>
+                    <TextBox Text="{Binding Path=Source, ElementName=webView, Mode=TwoWay, UpdateSourceTrigger=Explicit}" KeyDown="DetectEnterAndUpdate" />
+                    <Grid Margin="0 2 0 0" Height="30">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
 
-                <Button Name="captureButton" Width="Auto" Height="60" Click="CaptureButton_Click">캡처</Button>
-                <Button Name="bgmButton" Margin="0 2 0 0" Height="30" IsEnabled="False">BGM</Button>
-                <Button Name="extractButton" Margin="0 2 0 0" Height="30" IsEnabled="False">추출</Button>
-                <ToggleButton Name="alwaysOnTopButton" Margin="0 2 0 0" Height="30" Click="ConfigureAlwaysOnTop">항상 위에</ToggleButton>
-                <ToggleButton Name="muteButton" Margin="0 2 0 0" Height="30" Click="ChangeWebViewMuteStatus">음소거</ToggleButton>
-                <TextBlock Margin="0 7 0 4">현재 주소</TextBlock>
-                <TextBox Text="{Binding Path=Source, ElementName=webView, Mode=TwoWay, UpdateSourceTrigger=Explicit}" KeyDown="DetectEnterAndUpdate" />
-                <Grid Margin="0 2 0 0" Height="30">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-
-                    <Button Name="backwardButton" Margin="0 0 2 0" IsEnabled="{Binding Path=CanGoBack, ElementName=webView}" Click="GoBackward">뒤로</Button>
-                    <Button Grid.Column="1" Name="forwardButton" Margin="0 0 2 0" IsEnabled="{Binding Path=CanGoForward, ElementName=webView}" Click="GoForward">앞으로</Button>
-                    <Button Grid.Column="2" Name="RefreshButton" Click="Refresh">새로고침</Button>
-                </Grid>
-                <CheckBox Name="locPatchCheckBox" Margin="0 7 0 0" IsChecked="{Binding Path=EnableKoreanPatch, Mode=TwoWay}">한글패치 켜기</CheckBox>
-                <TextBlock Margin="0 7 0 4">스크린샷 저장 경로</TextBlock>
-                <TextBox Name="screenshotDirTextBox" Text="{Binding Path=ScreenshotSavePath, Mode=TwoWay}" KeyDown="DetectEnterAndUpdate" />
-                <Button Name="screenshotFolderSelectButton" Margin="0 2 0 0" Height="30" Click="SelectScreenshotFolder">폴더 선택</Button>
-                <StackPanel Orientation="Horizontal" Margin="0 7 0 0">
-                    <TextBlock>한글패치 버전:</TextBlock>
-                    <TextBlock Name="localizationPatchVersion" Margin="4 0 0 0" d:Text="1.4.4" Text="{Binding Path=LocalizationPatchVersion}"></TextBlock>
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" Margin="0 2 0 0">
-                    <TextBlock>실행기 버전:</TextBlock>
-                    <TextBlock Margin="4 0 0 0" d:Text="1.4.4" Text="{Binding Path=ClientVersion}"></TextBlock>
-                </StackPanel>
-                <TextBlock Margin="0 7 0 4">게임 화면 크기</TextBlock>
-                <ComboBox Name="resolutionSelectionComboBox" d:SelectedValue="1" SelectedValue="{Binding GameScreenSize, Mode=TwoWay, Converter={StaticResource GameScreenSizeToDoubleConverter}, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
+                        <Button Name="backwardButton" Margin="0 0 2 0" IsEnabled="{Binding Path=CanGoBack, ElementName=webView}" Click="GoBackward">뒤로</Button>
+                        <Button Grid.Column="1" Name="forwardButton" Margin="0 0 2 0" IsEnabled="{Binding Path=CanGoForward, ElementName=webView}" Click="GoForward">앞으로</Button>
+                        <Button Grid.Column="2" Name="RefreshButton" Click="Refresh">새로고침</Button>
+                    </Grid>
+                    <CheckBox Name="locPatchCheckBox" Margin="0 7 0 0" IsChecked="{Binding Path=EnableKoreanPatch, Mode=TwoWay}">한글패치 켜기</CheckBox>
+                    <TextBlock Margin="0 7 0 4">스크린샷 저장 경로</TextBlock>
+                    <TextBox Name="screenshotDirTextBox" Text="{Binding Path=ScreenshotSavePath, Mode=TwoWay}" KeyDown="DetectEnterAndUpdate" />
+                    <Button Name="screenshotFolderSelectButton" Margin="0 2 0 0" Height="30" Click="SelectScreenshotFolder">폴더 선택</Button>
+                    <StackPanel Orientation="Horizontal" Margin="0 7 0 0">
+                        <TextBlock>한글패치 버전:</TextBlock>
+                        <TextBlock Name="localizationPatchVersion" Margin="4 0 0 0" d:Text="1.4.4" Text="{Binding Path=LocalizationPatchVersion}"></TextBlock>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" Margin="0 2 0 0">
+                        <TextBlock>실행기 버전:</TextBlock>
+                        <TextBlock Margin="4 0 0 0" d:Text="1.4.4" Text="{Binding Path=ClientVersion}"></TextBlock>
+                    </StackPanel>
+                    <TextBlock Margin="0 7 0 4">게임 화면 크기</TextBlock>
+                    <ComboBox Name="resolutionSelectionComboBox" d:SelectedValue="1" SelectedValue="{Binding GameScreenSize, Mode=TwoWay, Converter={StaticResource GameScreenSizeToDoubleConverter}, NotifyOnSourceUpdated=True, NotifyOnTargetUpdated=True}"
                           SelectedValuePath="Multiplier" SourceUpdated="ResolutionSelectionChanged" TargetUpdated="ResolutionSelectionChanged">
-                    <local:GameScreenSize Multiplier="0.5" />
-                    <local:GameScreenSize Multiplier="0.75" />
-                    <local:GameScreenSize Multiplier="1" />
-                    <local:GameScreenSize Multiplier="1.25" />
-                    <local:GameScreenSize Multiplier="1.5" />
-                    <local:GameScreenSize Multiplier="1.75" />
-                    <local:GameScreenSize Multiplier="2" />
-                    <local:GameScreenSize Multiplier="NaN" />
-                </ComboBox>
-                <TextBlock Margin="0 7 0 0">패치 스크립트 업데이트 주소</TextBlock>
-                <TextBox Margin="0 4 0 0" Name="scriptUpdateUrlTextBox" Text="{Binding ScriptUpdateUrl, Mode=TwoWay}"  KeyDown="DetectEnterAndUpdate" />
-                <Button Margin="0 2 0 0" Name="scriptUpdateButton" Height="30" Click="ForceUpdateScript">강제 업데이트 (새로고침 후 적용)</Button>
-
-                <Button Margin="0 7 0 0" Height="30" Name="returnToProfileSelectionButton" Click="ReturnToProfileSelection">프로필 선택으로 돌아가기</Button>
-            </StackPanel>
+                        <local:GameScreenSize Multiplier="0.5" />
+                        <local:GameScreenSize Multiplier="0.75" />
+                        <local:GameScreenSize Multiplier="1" />
+                        <local:GameScreenSize Multiplier="1.25" />
+                        <local:GameScreenSize Multiplier="1.5" />
+                        <local:GameScreenSize Multiplier="1.75" />
+                        <local:GameScreenSize Multiplier="2" />
+                        <local:GameScreenSize Multiplier="NaN" />
+                    </ComboBox>
+                    <TextBlock Margin="0 7 0 0">패치 스크립트 업데이트 주소</TextBlock>
+                    <TextBox Margin="0 4 0 0" Name="scriptUpdateUrlTextBox" Text="{Binding ScriptUpdateUrl, Mode=TwoWay}"  KeyDown="DetectEnterAndUpdate" />
+                    <Button Margin="0 2 0 0" Name="scriptUpdateButton" Height="30" Click="ForceUpdateScript">강제 업데이트 (새로고침 후 적용)</Button>
+                </StackPanel>
+            </ScrollViewer>
+            
         </Grid>
     </DockPanel>
 </UserControl>
