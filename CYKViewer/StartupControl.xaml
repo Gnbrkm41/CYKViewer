@@ -13,7 +13,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Image Source="/CYKViewer;component/image.png" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Grid Grid.Column="1" Width="150" Height="200">
+        <Grid Grid.Column="1" Width="150" Height="230">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="*"/>
@@ -22,8 +22,9 @@
                 <RowDefinition Height="7*"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            <ListView Name="profileList" Grid.ColumnSpan="2">
+            <ListView Name="profileList" Grid.ColumnSpan="2" SelectionMode="Single" SelectionChanged="profileList_SelectionChanged">
                 <d:ListView.Items>
                     <TextBlock>Ayy</TextBlock>
                     <TextBlock>Lmao</TextBlock>
@@ -33,6 +34,7 @@
             <TextBox Name="profileNameTextBox"  Grid.Row="1" Margin="0 2 2 0" KeyDown="AddNewEntryOnEnter"/>
             <Button Name="registerNewProfileButton" Grid.Row="1" Margin="0 2 0 0" Grid.Column="1" Click="AddProfileButton_Click">등록</Button>
             <Button Name="startButton" Grid.Row="2" Margin="0 2 0 0" Grid.ColumnSpan="2" Click="StartRequested">시작</Button>
+            <CheckBox Name="setDefaultCheckBox" Margin="0 4 0 0" Grid.Row="3" Grid.ColumnSpan="2">기본 프로필로 설정</CheckBox>
         </Grid>
         <Border Grid.Column="1" Height="50" VerticalAlignment="Bottom" Margin="10">
             <Button Name="openReleasesPageButton" Visibility="Hidden" Background="AliceBlue" Click="OpenReleasesPage">업데이트가 있습니다, 여길 눌러 확인하세요</Button>

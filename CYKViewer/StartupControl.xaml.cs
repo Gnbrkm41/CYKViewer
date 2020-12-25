@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -84,25 +85,25 @@ namespace CYKViewer
                 return;
             }
 
-            // Ensure selection doesn't contain illegal characters.
+            if (setDefaultCheckBox.IsChecked == true)
+            {
+                _settings.DefaultProfile = selection;
+            }
+            else if (_settings.DefaultProfile == selection)
+            {
+                // It was set to the default profile, however the checkbox was unchecked (presumably, manually)
+                _settings.DefaultProfile = null;
+            }
+
             string pathToAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
             string userFolderPath = System.IO.Path.Join(pathToAppData, "CYKViewer", "userData", selection);
             GameControl gameControl = new(_parentWindow, userFolderPath, _settings);
-            _ = _parentWindow.Content = gameControl;
+            _parentWindow.Content = gameControl;
         }
 
-        private async void ControlLoaded(object sender, RoutedEventArgs e)
+        public static async Task<Version> GetLatestClientVersionAsync(HttpClient client, Version currentVersion)
         {
-            Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            Debug.WriteLine($"The client's version is {currentVersion.ToString(3)}");
-            // Load the settings first, so it doesn't need to wait for the update logic to finish
-            // in case it's slow to load data from GitHub
-            _settings = await ReadSettings();
-            _settings.ClientVersion = currentVersion.ToString(3);
-            _settings.PropertyChanged += UpdateSettingsFile;
-
             Debug.WriteLine("Checking for updates");
-            using HttpClient client = new();
             HttpRequestMessage request = new(HttpMethod.Get, "https://api.github.com/repos/Gnbrkm41/CYKViewer/releases/latest");
             request.Headers.Add("User-Agent", $"Gnbrkm41-CYKViewer-v" + currentVersion.ToString(3));
             request.Headers.Add("Accept", "application/vnd.github.v3+json");
@@ -122,10 +123,67 @@ namespace CYKViewer
             }
             catch (TaskCanceledException tcEx)
             {
-                // Timeout (100s). Not sure what to do about it - it's unlikely, but we don't want to crash the app
+                // Timeout (100s by default). Not sure what to do about it - it's unlikely, but we don't want to crash the app
                 // Maybe it'll succeed next time. For now, let's ignore
                 Debug.WriteLine($"Timeout while checking for client updates: {tcEx}");
             }
+
+            return latestVersion;
+        }
+
+        public static Version GetScriptVersion(string script)
+        {
+            Match match = Regex.Match(script, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
+            if (!match.Success)
+            {
+                return null;
+            }
+
+            Group group = match.Groups["version"];
+            if (!group.Success)
+            {
+                return null;
+            }
+
+            string rawVersion = group.Value;
+
+            return !Version.TryParse(rawVersion, out Version version) ? null : version;
+        }
+
+        public static string GetUpdateUrl(string script)
+        {
+            // When updating, also change the update URL.
+            Match updateUrlMatch = Regex.Match(script, @"^\s*\/\/\s*@updateURL\s*(?<updateUrl>.*?)\s*$", RegexOptions.Multiline);
+            if (!updateUrlMatch.Success)
+            {
+                return null;
+            }
+
+            Group updateUrlGroup = updateUrlMatch.Groups["updateUrl"];
+            if (!updateUrlGroup.Success)
+            {
+                return null;
+            }
+
+            string rawUrl = updateUrlGroup.Value;
+
+            // Perform basic validation - probably not good enough, but gives us a hint on whether the captured URL is valid.
+            return Uri.TryCreate(rawUrl, UriKind.Absolute, out _) ? rawUrl : null;
+        }
+
+        private async void ControlLoaded(object sender, RoutedEventArgs e)
+        {
+            Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
+            Debug.WriteLine($"The client's version is {currentVersion.ToString(3)}");
+            // Load the settings first, so it doesn't need to wait for the update logic to finish
+            // in case it's slow to load data from GitHub
+            _settings = ReadSettings(true);
+            _settings.ClientVersion = currentVersion.ToString(3);
+            _settings.PropertyChanged += UpdateSettingsFile;
+            
+            using HttpClient client = new();
+
+            Version latestVersion = await GetLatestClientVersionAsync(client, currentVersion);
 
             if (latestVersion != null)
             {
@@ -159,30 +217,32 @@ namespace CYKViewer
                 Debug.WriteLine($"Timeout while checking for script updates: {tcEx}");
             }
 
-            string scriptVersion = null;
+            Version scriptVersion = null;
             if (onlineScript != null)
             {
-                Match onlineScriptMatch = Regex.Match(onlineScript, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
-                string onlineVersionString = onlineScriptMatch.Groups["version"].Value;
-                Debug.WriteLine($"The version of the script from update source is {onlineVersionString}");
                 bool onlineIsNewer = true;
-                scriptVersion = onlineVersionString;
+                Version onlineScriptVersion = GetScriptVersion(onlineScript);
+                Debug.WriteLine($"The version of the script from update source is {onlineScriptVersion.ToString(3)}");
                 if (File.Exists(s_scriptPath))
                 {
-                    string existingScript = await File.ReadAllTextAsync(s_scriptPath);
-                    Match existingMatch = Regex.Match(existingScript, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
-                    string existingVersionString = existingMatch.Groups["version"].Value;
-                    Debug.WriteLine($"The version of the offline script is {existingVersionString}");
-                    onlineIsNewer = new Version(onlineVersionString) > new Version(existingVersionString);
-                    if (!onlineIsNewer)
+                    string offlineScript = await File.ReadAllTextAsync(s_scriptPath);
+                    Version offlineScriptVersion = GetScriptVersion(offlineScript);
+                    Debug.WriteLine($"The version of the offline script is {offlineScriptVersion.ToString(3)}");
+                    if (onlineScriptVersion > offlineScriptVersion)
                     {
-                        onlineScript = existingScript;
+                        onlineScript = offlineScript;
+                        scriptVersion = onlineScriptVersion;
                     }
-                    scriptVersion = onlineIsNewer ? onlineVersionString : existingVersionString;
+                    else
+                    {
+                        scriptVersion = offlineScriptVersion;
+                        onlineIsNewer = false;
+                    }
                 }
                 else
                 {
                     Debug.WriteLine($"The offline script does not exist.");
+                    scriptVersion = onlineScriptVersion;
                 }
 
                 if (onlineIsNewer)
@@ -192,35 +252,30 @@ namespace CYKViewer
                     await File.WriteAllTextAsync(s_scriptPath, onlineScript);
 
                     // When updating, also change the update URL.
-                    Match updateUrlMatch = Regex.Match(onlineScript, @"^\s*\/\/\s*@updateURL\s*(?<updateUrl>.*?)\s*$", RegexOptions.Multiline);
-                    if (updateUrlMatch.Success)
+                    string updateUrl = GetUpdateUrl(onlineScript);
+                    if (updateUrl != null)
                     {
-                        Group updateUrlGroup = updateUrlMatch.Groups["updateUrl"];
-
-                        if (updateUrlGroup.Success && Uri.TryCreate(updateUrlGroup.Value, UriKind.Absolute, out _))
-                        {
-                            _settings.ScriptUpdateUrl = updateUrlGroup.Value;
-                        }
-                        else
-                        {
-                            // no clue what to do if it's invalid.
-                            Debug.WriteLine($"Failed to obtain a valid URL from the new script: {updateUrlGroup.Value}");
-                        }
+                        _settings.ScriptUpdateUrl = updateUrl;
+                    }
+                    else
+                    {
+                        // no clue what to do if it's invalid.
+                        Debug.WriteLine($"Failed to obtain a valid URL from the new script.");
                     }
                 }
                 Debug.WriteLine("Update logic complete.");
             }
 
-            _settings.LocalizationPatchVersion = string.IsNullOrWhiteSpace(scriptVersion) ? "알 수 없음" : scriptVersion;
+            _settings.LocalizationPatchVersion = scriptVersion is null ? "알 수 없음" : scriptVersion.ToString(3);
         }
 
-        private static async Task<Settings> ReadSettings()
+        public static Settings ReadSettings(bool createNew)
         {
-            Settings settings;
+            Settings settings = null;
             // Look for a configuration file.
             if (File.Exists(s_settingsPath))
             {
-                string settingsJson = await File.ReadAllTextAsync(s_settingsPath);
+                string settingsJson = File.ReadAllText(s_settingsPath);
                 settings = JsonSerializer.Deserialize<Settings>(settingsJson, s_serializerOptions);
 
                 // Added in 1.0.3 - if null (does not exist), set a default value of 1.0x
@@ -229,7 +284,7 @@ namespace CYKViewer
                 // Added in 1.0.4 - if null (does not exist), set the default value to the GitHub update link
                 settings.ScriptUpdateUrl ??= "https://shinymaskr.ga/ShinyColors.user.js";
             }
-            else
+            else if (createNew)
             {
                 settings = new Settings
                 {
@@ -243,16 +298,16 @@ namespace CYKViewer
             return settings;
         }
 
-        private async void UpdateSettingsFile(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        public static async void UpdateSettingsFile(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // TODO: Pull the non-config data like the patch version out to a separate type?
-            if (e.PropertyName == "LocalizationPatchVersion")
+            if (e.PropertyName == "LocalizationPatchVersion" || e.PropertyName == "ClientVersion")
             {
                 return;
             }
 
             // Don't care what exactly changed - just serialize the object then save it to the path.
-            string settingsJson = JsonSerializer.Serialize(_settings, s_serializerOptions);
+            string settingsJson = JsonSerializer.Serialize((Settings)sender, s_serializerOptions);
             await File.WriteAllTextAsync(s_settingsPath, settingsJson);
         }
 
@@ -286,6 +341,11 @@ namespace CYKViewer
 
             Profiles.Add(profileNameTextBox.Text);
             profileNameTextBox.Clear();
+        }
+
+        private void profileList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            setDefaultCheckBox.IsChecked = _settings.DefaultProfile == (string)profileList.SelectedValue;
         }
     }
     class GithubRelease

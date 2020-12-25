@@ -255,6 +255,12 @@ $@"(function()
             {
                 _ = await EnableLocalizationPatch();
             }
+
+            if (_settings.LocalizationPatchVersion?.EndsWith("(새로고침 필요)") == true)
+            {
+                // Effectively refreshed, so remove the notification
+                _settings.LocalizationPatchVersion = _settings.LocalizationPatchVersion.Split(' ')[0];
+            }
         }
 
         private void DetectEnterAndUpdate(object sender, KeyEventArgs e)

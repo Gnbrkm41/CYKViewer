@@ -59,6 +59,18 @@ namespace CYKViewer
             }
         }
 
+        // Property added in version 1.0.7
+        private string _defaultProfile;
+        public string DefaultProfile
+        {
+            get => _defaultProfile;
+            set
+            {
+                _defaultProfile = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         // Those below are not configuration data
 
         private string _localizationPatchVersion;
