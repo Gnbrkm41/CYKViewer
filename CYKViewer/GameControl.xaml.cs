@@ -430,7 +430,7 @@ $@"(function()
                 return;
             }
 
-            Match scriptVersionMatch = Regex.Match(script, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
+            Match scriptVersionMatch = Regex.Match(script, @"\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
             if (scriptVersionMatch.Success)
             {
                 string versionString = scriptVersionMatch.Groups["version"].Value;
@@ -448,7 +448,7 @@ $@"(function()
             }
 
             // When updating, also change the update URL.
-            Match updateUrlMatch = Regex.Match(script, @"^\s*\/\/\s*@updateURL\s*(?<updateUrl>.*?)\s*$", RegexOptions.Multiline);
+            Match updateUrlMatch = Regex.Match(script, @"\s*\/\/\s*@updateURL\s*(?<updateUrl>.*?)\s*$", RegexOptions.Multiline);
             if (updateUrlMatch.Success)
             {
                 Group updateUrlGroup = updateUrlMatch.Groups["updateUrl"];

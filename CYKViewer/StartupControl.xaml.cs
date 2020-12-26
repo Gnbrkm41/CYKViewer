@@ -133,7 +133,7 @@ namespace CYKViewer
 
         public static Version GetScriptVersion(string script)
         {
-            Match match = Regex.Match(script, @"^\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
+            Match match = Regex.Match(script, @"\s*\/\/\s*@version\s*(?<version>.*?)\s*$", RegexOptions.Multiline);
             if (!match.Success)
             {
                 return null;
@@ -222,13 +222,13 @@ namespace CYKViewer
             {
                 bool onlineIsNewer = true;
                 Version onlineScriptVersion = GetScriptVersion(onlineScript);
-                Debug.WriteLine($"The version of the script from update source is {onlineScriptVersion.ToString(3)}");
+                Debug.WriteLine($"The version of the script from update source is {onlineScriptVersion?.ToString(3) ?? "null"}");
                 if (File.Exists(s_scriptPath))
                 {
                     string offlineScript = await File.ReadAllTextAsync(s_scriptPath);
                     Version offlineScriptVersion = GetScriptVersion(offlineScript);
-                    Debug.WriteLine($"The version of the offline script is {offlineScriptVersion.ToString(3)}");
-                    if (onlineScriptVersion > offlineScriptVersion)
+                    Debug.WriteLine($"The version of the offline script is {offlineScriptVersion?.ToString(3) ?? "null"}");
+                    if (onlineScriptVersion is not null && offlineScriptVersion is not null && onlineScriptVersion > offlineScriptVersion)
                     {
                         onlineScript = offlineScript;
                         scriptVersion = onlineScriptVersion;
