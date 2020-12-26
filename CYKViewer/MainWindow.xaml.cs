@@ -57,7 +57,7 @@ namespace CYKViewer
 
             // TODO: move the methods under 'StartupControl' to a better place?
             Settings settings = StartupControl.ReadSettings(false);
-            defaultProfile ??= settings.DefaultProfile;
+            defaultProfile ??= settings?.DefaultProfile;
 
             if (defaultProfile != null)
             {
