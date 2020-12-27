@@ -9,11 +9,17 @@
              d:DesignHeight="450" d:DesignWidth="800"
              KeyDown="Control_KeyDown">
     <DockPanel>
-        <StatusBar DockPanel.Dock="Bottom">
-            <StatusBarItem>
-                <TextBlock Name="statusBarTextBlock" />
-            </StatusBarItem>
-        </StatusBar>
+        <DockPanel.Resources>
+            <local:BoolToVisibilityConverter x:Key="BoolToCollapsedVisibilityConverter" />
+        </DockPanel.Resources>
+        <Grid Background="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Height="20" DockPanel.Dock="Bottom">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="100"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Name="statusBarTextBlock" d:Text="Example Text"/>
+            <ToggleButton Name="menuOpenToggleButton" Grid.Column="1" IsChecked="{Binding Path=MenuOpened, Mode=TwoWay}" Click="menuOpenToggleButton_Click">메뉴 열기</ToggleButton>
+        </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" Name="webViewColumnDefinition"/>
@@ -24,7 +30,7 @@
                 <wv2:WebView2 Width="{Binding Path=ActualWidth, ElementName=webViewBorder}" Height="{Binding Path=ActualHeight, ElementName=webViewBorder}" Name="webView" d:Source="https://bing.com"
                         CoreWebView2InitializationCompleted="PrepareLocalizationPatchOnInitialLoad" WebMessageReceived="DebugMessageReceived" NavigationStarting="OnNavigationStart" HorizontalAlignment="Left"/>
             </Border>
-            <ScrollViewer Grid.Column="1" Width="306" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <ScrollViewer Name="sidePanelScrollViewer" Visibility="{Binding Path=MenuOpened, Converter={StaticResource BoolToCollapsedVisibilityConverter}}" Grid.Column="1" Width="306" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel Name="sidePanel" Width="Auto" Grid.Column="1" Orientation="Vertical" Margin="3 0 3 3">
                     <StackPanel.Resources>
                         <local:GameScreenSizeToDoubleConverter x:Key="GameScreenSizeToDoubleConverter" />

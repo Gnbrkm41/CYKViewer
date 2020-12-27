@@ -5,6 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CYKViewer"
         mc:Ignorable="d"
-        Title="CYKViewer" MinWidth="1140" MinHeight="640" Closing="ClosingTrigger" Initialized="Window_Initialized">
+        Title="CYKViewer" Closing="ClosingTrigger" Initialized="Window_Initialized">
     
 </Window>

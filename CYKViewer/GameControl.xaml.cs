@@ -42,7 +42,8 @@ namespace CYKViewer
             InitializeComponent();
 
             _settings = settings;
-            sidePanel.DataContext = _settings;
+            sidePanelScrollViewer.DataContext = _settings;
+            menuOpenToggleButton.DataContext = _settings;
             ParentWindow = parentWindow;
             CoreWebView2CreationProperties props = new()
             {
@@ -354,29 +355,7 @@ $@"(function()
 
         private void ResolutionSelectionChanged(object sender, DataTransferEventArgs e)
         {
-            GameScreenSize value = (GameScreenSize)resolutionSelectionComboBox.SelectedItem;
-            if (double.IsNaN(value.Multiplier))
-            {
-                // Set to auto-fit
-                webViewBorder.Width = double.NaN;
-                webViewBorder.Height = double.NaN;
-                ParentWindow.MinWidth = 306;
-                ParentWindow.MinHeight = 0;
-                webViewBorder.HorizontalAlignment = HorizontalAlignment.Stretch;
-                webViewBorder.VerticalAlignment = VerticalAlignment.Stretch;
-            }
-            else
-            {
-                // There's a weird discrepancy between the window size and the actual control's size. 16 is the *correct* offset
-                // for the window to be fully visible.
-                // The 306 offset is for the menu to be fully visible (300 for the panel itself, 6 for the margin)
-                ParentWindow.MinWidth = value.Width + 16 + 306;
-                ParentWindow.MinHeight = value.Height + 60;
-                webViewBorder.Width = value.Width;
-                webViewBorder.Height = value.Height;
-                webViewBorder.HorizontalAlignment = HorizontalAlignment.Left;
-                webViewBorder.VerticalAlignment = VerticalAlignment.Top;
-            }
+            UpdateScreenSize();
         }
 
         private async void ForceUpdateScript(object sender, RoutedEventArgs e)
@@ -475,6 +454,46 @@ $@"(function()
 
             _ = ParentWindow.Content = new StartupControl(ParentWindow);
             webView.Dispose();
+        }
+
+        private void menuOpenToggleButton_Click(object sender, RoutedEventArgs e)
+        {
+            UpdateScreenSize();
+        }
+
+        private void UpdateScreenSize()
+        {
+            bool menuOpen = menuOpenToggleButton.IsChecked == true;
+            const int menuWidth = 306;
+
+            GameScreenSize value = (GameScreenSize)resolutionSelectionComboBox.SelectedItem;
+            if (double.IsNaN(value.Multiplier))
+            {
+                // Set to auto-fit
+                webViewBorder.Width = double.NaN;
+                webViewBorder.Height = double.NaN;
+                ParentWindow.MinWidth = menuOpen ? menuWidth : 0;
+                ParentWindow.MinHeight = 0;
+                webViewBorder.HorizontalAlignment = HorizontalAlignment.Stretch;
+                webViewBorder.VerticalAlignment = VerticalAlignment.Stretch;
+            }
+            else
+            {
+                // There's a weird discrepancy between the window size and the actual control's size. 16 is the *correct* offset
+                // for the window to be fully visible.
+                // The 306 offset is for the menu to be fully visible (300 for the panel itself, 6 for the margin)
+                ParentWindow.MinWidth = value.Width + 16 + (menuOpen ? menuWidth : 0);
+                ParentWindow.MinHeight = value.Height + 60;
+                webViewBorder.Width = value.Width;
+                webViewBorder.Height = value.Height;
+                webViewBorder.HorizontalAlignment = HorizontalAlignment.Left;
+                webViewBorder.VerticalAlignment = VerticalAlignment.Top;
+
+                if (!menuOpen)
+                {
+                    ParentWindow.Width -= menuWidth;
+                }
+            }
         }
     }
     public class GameScreenSize
