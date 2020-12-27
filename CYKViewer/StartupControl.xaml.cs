@@ -283,6 +283,9 @@ namespace CYKViewer
 
                 // Added in 1.0.4 - if null (does not exist), set the default value to the GitHub update link
                 settings.ScriptUpdateUrl ??= "https://shinymaskr.ga/ShinyColors.user.js";
+
+                // Added in 1.0.9 - if null (does not exist), start with the menu open
+                settings.MenuOpened ??= true;
             }
             else if (createNew)
             {

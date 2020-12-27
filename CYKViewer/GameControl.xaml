@@ -17,7 +17,7 @@
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Name="statusBarTextBlock" d:Text="Example Text"/>
+            <TextBlock Name="statusBarTextBlock" Margin="3 0 0 0" d:Text="Example Text"/>
             <ToggleButton Name="menuOpenToggleButton" Grid.Column="1" IsChecked="{Binding Path=MenuOpened, Mode=TwoWay}" Click="menuOpenToggleButton_Click">메뉴 열기</ToggleButton>
         </Grid>
         <Grid>

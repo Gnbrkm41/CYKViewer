@@ -72,8 +72,8 @@ namespace CYKViewer
         }
 
         // Property added in 1.0.9
-        private bool _menuOpened = false;
-        public bool MenuOpened
+        private bool? _menuOpened;
+        public bool? MenuOpened
         {
             get => _menuOpened;
             set
