@@ -294,7 +294,8 @@ namespace CYKViewer
                     EnableKoreanPatch = true,
                     ScreenshotSavePath = System.IO.Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "CYKViewer"),
                     GameScreenSize = new GameScreenSize(1.0),
-                    ScriptUpdateUrl = "https://shinymaskr.ga/ShinyColors.user.js"
+                    ScriptUpdateUrl = "https://shinymaskr.ga/ShinyColors.user.js",
+                    MenuOpened = true
                 };
             }
 
