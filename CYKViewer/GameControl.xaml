@@ -16,9 +16,11 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
             <TextBlock Name="statusBarTextBlock" Margin="3 0 0 0" d:Text="Example Text"/>
-            <ToggleButton Name="menuOpenToggleButton" Grid.Column="1" IsChecked="{Binding Path=MenuOpened, Mode=TwoWay}" Click="menuOpenToggleButton_Click">메뉴 열기</ToggleButton>
+            <Button Name="menuCaptureButton" Grid.Column="1" Click="CaptureButton_Click" Margin="0 0 2 0">캡처</Button>
+            <ToggleButton Name="menuOpenToggleButton" Grid.Column="2" IsChecked="{Binding Path=MenuOpened, Mode=TwoWay}" Click="menuOpenToggleButton_Click">메뉴</ToggleButton>
         </Grid>
         <Grid>
             <Grid.ColumnDefinitions>
