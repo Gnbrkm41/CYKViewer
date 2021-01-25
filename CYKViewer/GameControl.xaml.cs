@@ -37,6 +37,8 @@ namespace CYKViewer
         private readonly System.Timers.Timer _statusBarTimer = new(10000) { AutoReset = false, Enabled = false };
         public MainWindow ParentWindow { get; set; }
 
+        public static RoutedCommand ScreenshotCommand = new RoutedCommand();
+
         public GameControl(MainWindow parentWindow, string userDataFolder, Settings settings)
         {
             InitializeComponent();
@@ -54,6 +56,9 @@ namespace CYKViewer
             webView.Source = new Uri("https://shinycolors.enza.fun");
 
             _statusBarTimer.Elapsed += StatusBarContentExpired;
+
+            ScreenshotCommand.InputGestures.Add(new KeyGesture(Key.F8));
+            CommandBindings.Add(new CommandBinding(ScreenshotCommand, CaptureButton_Click));
         }
 
         private void StatusBarContentExpired(object sender, System.Timers.ElapsedEventArgs e)
@@ -71,6 +76,12 @@ namespace CYKViewer
         {
             TaskCompletionSource tcs = new();
             ScreenshotObject screenshot = new(tcs);
+
+            if (webView?.CoreWebView2 == null)
+            {
+                return;
+            }
+
             webView.CoreWebView2.AddHostObjectToScript(screenshot.ObjectId, screenshot);
             string script =
 $@"(function()
