@@ -176,42 +176,6 @@ $@"(function()
             webView.CoreWebView2.AddHostObjectToScript("SC_BgmEnableMenuEntry", _enableBgm);
         }
 
-        private Task<string> EnableLocalizationPatch()
-        {
-            // Ensure CoreWebView is initialized first
-            if (webView.CoreWebView2 == null)
-            {
-                return Task.FromResult<string>(null);
-            }
-
-            string prepScript = File.ReadAllText("scripts/pre-inject.js");
-            string script = null;
-            try
-            {
-                script = File.ReadAllText(s_scriptPath);
-            }
-            catch (IOException ex)
-            {
-                Debug.WriteLine($"Failed to read the localization patch script: {ex}");
-            }
-
-            return webView.ExecuteScriptAsync(prepScript + script);
-        }
-
-        private Task<string> DisableLocalizationPatch()
-        {
-            // Ensure CoreWebView is initialized first
-            if (webView.CoreWebView2 == null)
-            {
-                return Task.FromResult<string>(null);
-            }
-
-            string prepScript = File.ReadAllText("scripts/pre-inject.js");
-
-            return webView.ExecuteScriptAsync(prepScript);
-        }
-
-
         private async void BgmButton_Click(object sender, RoutedEventArgs e)
         {
             Debug.WriteLine("HOST: BGM Button Clicked");
@@ -248,14 +212,30 @@ $@"(function()
             bgmButton.IsEnabled = false;
             extractButton.IsEnabled = false;
 
-            if (locPatchCheckBox.IsChecked != true)
+            // Ensure CoreWebView is initialized first
+            if (webView.CoreWebView2 == null)
             {
-                _ = await DisableLocalizationPatch();
+                return;
             }
-            else
+
+            string scriptToExecute = File.ReadAllText("scripts/pre-inject.js");
+
+            if (locPatchCheckBox.IsChecked == true && e.Uri.Contains("shinycolors.enza.fun"))
             {
-                _ = await EnableLocalizationPatch();
+                string patchScript = null;
+                try
+                {
+                    patchScript = File.ReadAllText(s_scriptPath);
+                }
+                catch (IOException ex)
+                {
+                    Debug.WriteLine($"Failed to read the localization patch script: {ex}");
+                }
+
+                scriptToExecute += patchScript;
             }
+
+            _ = await webView.ExecuteScriptAsync(scriptToExecute);
 
             if (_settings.LocalizationPatchVersion?.EndsWith("(새로고침 필요)") == true)
             {
