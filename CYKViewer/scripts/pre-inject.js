@@ -71,6 +71,11 @@ function Implementation_registerMenuCommand(commandName, commandFunc, accessKey)
         chrome.webview.hostObjects.sync.SC_CommsExtractionMenuEntry.Set(menuId, commandName);
         Debug_Console(`"${commandName}" - Host called`);
     }
+    else if (commandName.includes("개발자")) {
+        Debug_Console(`"${commandName}" - is devmode related, calling the host`);
+        chrome.webview.hostObjects.sync.SC_DevModeEnableMenuEntry.Set(menuId, commandName);
+        Debug_Console(`"${commandName}" - Host called`);
+    }
 
     Debug_Console(`"${commandName}" - Added to ID ${menuId}`);
     return menuId;
@@ -95,6 +100,11 @@ function Implementation_unregisterMenuCommand(menuCmdId) {
             chrome.webview.hostObjects.sync.SC_CommsExtractionMenuEntry.Set(null, null);
             Debug_Console(`"${menuEntry.commandName}" - Host called`);
         }
+        else if (menuEntry.commandName.includes("개발자")) {
+            Debug_Console(`"${menuEntry.commandName}" - is devmode related, calling the host`);
+            chrome.webview.hostObjects.sync.SC_DevModeEnableMenuEntry.Set(null, null);
+            Debug_Console(`"${menuEntry.commandName}" - Host called`);
+        }
     }
     else {
         Debug_Console(`Non-existent ID, ignoring the request`);
@@ -112,6 +122,7 @@ else {
     // Also going to reset the buttons, because those are useless when we're not in the shinycolors page.
     chrome.webview.hostObjects.sync.SC_BgmEnableMenuEntry.Set(null, null);
     chrome.webview.hostObjects.sync.SC_CommsExtractionMenuEntry.Set(null, null);
+    chrome.webview.hostObjects.sync.SC_DevModeEnableMenuEntry.Set(null, null);
 }
 
 // Taken from the Edge WebView2 examples page - disables the context menu (right click)

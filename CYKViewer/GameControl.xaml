@@ -6,7 +6,7 @@
              xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
              xmlns:local="clr-namespace:CYKViewer"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800"
+             d:DesignHeight="693.976" d:DesignWidth="906.627"
              KeyDown="Control_KeyDown">
     <DockPanel>
         <DockPanel.Resources>
@@ -19,7 +19,7 @@
                 <ColumnDefinition Width="100"/>
             </Grid.ColumnDefinitions>
             <TextBlock Name="statusBarTextBlock" Margin="3 0 0 0" d:Text="Example Text"/>
-            <Button Name="menuCaptureButton" Grid.Column="1" Click="CaptureButton_Click" Margin="0 0 2 0">캡처</Button>
+            <Button Name="menuCaptureButton" Grid.Column="1" Click="CaptureButton_Click" Margin="0 0 2 0">캡처 (F8)</Button>
             <ToggleButton Name="menuOpenToggleButton" Grid.Column="2" IsChecked="{Binding Path=MenuOpened, Mode=TwoWay}" Click="menuOpenToggleButton_Click">메뉴</ToggleButton>
         </Grid>
         <Grid>
@@ -38,9 +38,9 @@
                         <local:GameScreenSizeToDoubleConverter x:Key="GameScreenSizeToDoubleConverter" />
                     </StackPanel.Resources>
 
-                    <Button Name="captureButton" Width="Auto" Height="60" Click="CaptureButton_Click">캡처</Button>
-                    <Button Name="bgmButton" Margin="0 2 0 0" Height="30" IsEnabled="False">BGM</Button>
-                    <Button Name="extractButton" Margin="0 2 0 0" Height="30" IsEnabled="False">추출</Button>
+                    <Button Name="captureButton" Width="Auto" Height="60" Click="CaptureButton_Click">캡처 (F8)</Button>
+                    <Button Name="bgmButton" Margin="0 2 0 0" Height="30" Click="BgmButton_Click" IsEnabled="False">BGM</Button>
+                    <Button Name="extractButton" Margin="0 2 0 0" Height="30" Click="ExtractButton_Click" IsEnabled="False">추출</Button>
                     <ToggleButton Name="alwaysOnTopButton" Margin="0 2 0 0" Height="30" Click="ConfigureAlwaysOnTop">항상 위에</ToggleButton>
                     <ToggleButton Name="muteButton" Margin="0 2 0 0" Height="30" Click="ChangeWebViewMuteStatus">음소거</ToggleButton>
                     <Button Margin="0 2 0 0" Height="30" Name="returnToProfileSelectionButton" Click="ReturnToProfileSelection">프로필 선택으로 돌아가기</Button>
@@ -84,9 +84,10 @@
                     <TextBlock Margin="0 7 0 0">패치 스크립트 업데이트 주소</TextBlock>
                     <TextBox Margin="0 4 0 0" Name="scriptUpdateUrlTextBox" Text="{Binding ScriptUpdateUrl, Mode=TwoWay}"  KeyDown="DetectEnterAndUpdate" />
                     <Button Margin="0 2 0 0" Name="scriptUpdateButton" Height="30" Click="ForceUpdateScript">강제 업데이트 (새로고침 후 적용)</Button>
+                    <Button Margin="0 4 0 0" Name="devModeButton" Height="30" Click="devModeButton_Click" IsEnabled="False">개발자 모드</Button>
                 </StackPanel>
             </ScrollViewer>
-            
+
         </Grid>
     </DockPanel>
 </UserControl>

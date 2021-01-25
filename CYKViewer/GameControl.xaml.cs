@@ -32,6 +32,7 @@ namespace CYKViewer
 
         private MenuEntry _commsExtraction;
         private MenuEntry _enableBgm;
+        private MenuEntry _devMode;
 
         private readonly Settings _settings;
         private readonly System.Timers.Timer _statusBarTimer = new(10000) { AutoReset = false, Enabled = false };
@@ -167,7 +168,6 @@ $@"(function()
                     extractButton.IsEnabled = true;
                 }
             });
-            extractButton.Click += ExtractButton_Click;
 
             _enableBgm = new MenuEntry(obj =>
             {
@@ -181,10 +181,23 @@ $@"(function()
                     bgmButton.IsEnabled = true;
                 }
             });
-            bgmButton.Click += BgmButton_Click;
+
+            _devMode = new MenuEntry(obj =>
+            {
+                if (obj.Name == null)
+                {
+                    devModeButton.IsEnabled = false;
+                }
+                else
+                {
+                    devModeButton.Content = obj.Name;
+                    devModeButton.IsEnabled = true;
+                }
+            });
 
             webView.CoreWebView2.AddHostObjectToScript("SC_CommsExtractionMenuEntry", _commsExtraction);
             webView.CoreWebView2.AddHostObjectToScript("SC_BgmEnableMenuEntry", _enableBgm);
+            webView.CoreWebView2.AddHostObjectToScript("SC_DevModeEnableMenuEntry", _devMode);
         }
 
         private async void BgmButton_Click(object sender, RoutedEventArgs e)
@@ -210,8 +223,6 @@ $@"(function()
             if (e.Key == Key.F5 || e.Key == Key.BrowserRefresh)
             {
                 webView.Reload();
-                bgmButton.IsEnabled = false;
-                extractButton.IsEnabled = false;
                 e.Handled = true;
             }
         }
@@ -222,6 +233,7 @@ $@"(function()
             // if the URL is valid and the script is loaded.
             bgmButton.IsEnabled = false;
             extractButton.IsEnabled = false;
+            devModeButton.IsEnabled = false;
 
             // Ensure CoreWebView is initialized first
             if (webView.CoreWebView2 == null)
@@ -485,6 +497,12 @@ $@"(function()
                     ParentWindow.Width -= menuWidth;
                 }
             }
+        }
+
+        private async void devModeButton_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("HOST: DevMode Button Clicked");
+            _ = await webView.CoreWebView2.ExecuteScriptAsync($"Implementation_InvokeHandler(\"{_devMode.Id}\");");
         }
     }
     public class GameScreenSize
