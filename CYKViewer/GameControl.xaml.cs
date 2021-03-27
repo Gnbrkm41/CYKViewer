@@ -243,16 +243,30 @@ $@"(function()
 
             string scriptToExecute = File.ReadAllText("scripts/pre-inject.js");
 
-            if (locPatchCheckBox.IsChecked == true && e.Uri.Contains("shinycolors.enza.fun"))
+            if (e.Uri.Contains("shinycolors.enza.fun"))
             {
                 string patchScript = null;
-                try
+                if (locPatchCheckBox.IsChecked == true)
                 {
-                    patchScript = File.ReadAllText(s_scriptPath);
+                    try
+                    {
+                        patchScript = File.ReadAllText(s_scriptPath);
+                    }
+                    catch (IOException ex)
+                    {
+                        Debug.WriteLine($"Failed to read the script: {ex}");
+                    }
                 }
-                catch (IOException ex)
+                else // Alternative script for supporting background BGM functionality without the loc. script
                 {
-                    Debug.WriteLine($"Failed to read the localization patch script: {ex}");
+                    try
+                    {
+                        patchScript = File.ReadAllText("scripts/alt-script.js");
+                    }
+                    catch (IOException ex)
+                    {
+                        Debug.WriteLine($"Failed to read the script: {ex}");
+                    }
                 }
 
                 scriptToExecute += patchScript;
@@ -416,7 +430,7 @@ $@"(function()
             if (scriptVersionMatch.Success)
             {
                 string versionString = scriptVersionMatch.Groups["version"].Value;
-                _settings.LocalizationPatchVersion = versionString;
+                _settings.LocalizationPatchVersion = versionString + " (새로고침 필요)";
 
                 statusBarTextBlock.Text = $"스크립트 업데이트 성공 (새로고침 후 적용됩니다)";
                 _statusBarTimer.Stop();
