@@ -111,11 +111,11 @@ namespace CYKViewer
                             Debug.WriteLine($"The version of the offline script is {offlineScriptVersion.ToString(3)}");
                             if (onlineScriptVersion > offlineScriptVersion)
                             {
-                                onlineScript = offlineScript;
                                 scriptVersion = onlineScriptVersion;
                             }
                             else
                             {
+                                onlineScript = offlineScript;
                                 scriptVersion = offlineScriptVersion;
                                 onlineIsNewer = false;
                             }
