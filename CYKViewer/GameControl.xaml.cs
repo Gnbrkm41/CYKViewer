@@ -345,14 +345,24 @@ $@"(function()
                     // Unfortunately, the webview creates multiple processes and the process ID we get from CoreWebView2 isn't for the process that plays the audio
                     AudioSessionControl session = playbackSessions[i];
 
-                    using Process process = Process.GetProcessById((int)session.GetProcessID);
-                    if (process.ProcessName != "msedgewebview2")
+                    try
                     {
-                        session.Dispose();
-                        continue;
+                        using Process process = Process.GetProcessById((int)session.GetProcessID);
+                        if (process.ProcessName != "msedgewebview2")
+                        {
+                            session.Dispose();
+                            continue;
+                        }
+                        webView2Session = session;
+                        break;
                     }
-                    webView2Session = session;
-                    break;
+                    catch (ArgumentException ae)
+                    {
+                        // Somehow, there is an entry in the playbacksessions collection
+                        // however it is not a valid PID for some reason (out of luck?)
+                        // In which case, just dispose the session control object and continue
+                        session.Dispose();
+                    }
                 }
 
                 if (webView2Session == null)
