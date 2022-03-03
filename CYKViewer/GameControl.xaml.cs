@@ -48,11 +48,10 @@ namespace CYKViewer
             sidePanelScrollViewer.DataContext = _settings;
             menuOpenToggleButton.DataContext = _settings;
             ParentWindow = parentWindow;
-            CoreWebView2CreationProperties props = new()
-            {
-                UserDataFolder = userDataFolder
-            };
-            webView.CreationProperties = props;
+
+            CoreWebView2EnvironmentOptions options = new CoreWebView2EnvironmentOptions("--autoplay-policy=no-user-gesture-required");
+            CoreWebView2Environment env = CoreWebView2Environment.CreateAsync(null, userDataFolder, options).Result; // Oh, the joys of .Result!
+            webView.EnsureCoreWebView2Async(env);
 
             webView.Source = new Uri("https://shinycolors.enza.fun");
 
