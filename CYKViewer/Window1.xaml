@@ -1,0 +1,99 @@
+﻿<Window x:Class="CYKViewer.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CYKViewer"
+        mc:Ignorable="d"
+        Title="Window1" Height="600" Width="800">
+    <Grid>
+        <TabControl>
+            <TabItem Width="159" Height="120">
+                <TabItem.Header>
+                    <StackPanel Orientation="Vertical">
+                        <Image Width="75" Height="75" Source="https://shinycolors.info/w/images/8/87/Icon_Chiyoko_P_SSR_06.png"></Image>
+                        <StackPanel Margin="0 8 0 0" Orientation="Horizontal">
+                            <TextBlock Margin="0 0 4 0" Foreground="DeepPink" FontWeight="ExtraBold">Vo</TextBlock>
+                            <TextBlock Margin="0 0 8 0">-%</TextBlock>
+                            <TextBlock Margin="0 0 4 0" Foreground="DarkOrange" FontWeight="ExtraBold">Vi</TextBlock>
+                            <TextBlock Margin="0 0 8 0">-%</TextBlock>
+                            <TextBlock Margin="0 0 4 0" Foreground="Blue" FontWeight="ExtraBold">Da</TextBlock>
+                            <TextBlock>-%</TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem.Header>
+                <StackPanel>
+                    <TextBox>TOTAL STAT STUFFS GO HERE</TextBox>
+                    <TabControl TabStripPlacement="Left">
+                        <TabItem>
+                            <TabItem.Header>AAAAAAAAAAAAA</TabItem.Header>
+                            AAAAAAAAAAAAAAAAA
+                        </TabItem>
+                        
+                    </TabControl>
+                </StackPanel>
+                
+            </TabItem>
+            <TabItem Width="159" Height="120">
+                <TabItem.Header>
+                    <StackPanel Orientation="Vertical">
+                        <Image Width="75" Height="75" Source="https://shinycolors.info/w/images/8/87/Icon_Chiyoko_P_SSR_06.png"></Image>
+                        <StackPanel Margin="0 8 0 0" Orientation="Horizontal">
+                            <TextBlock Margin="0 0 4 0" Foreground="DeepPink" FontWeight="ExtraBold">Vo</TextBlock>
+                            <TextBlock Margin="0 0 8 0">-%</TextBlock>
+                            <TextBlock Margin="0 0 4 0" Foreground="DarkOrange" FontWeight="ExtraBold">Vi</TextBlock>
+                            <TextBlock Margin="0 0 8 0">-%</TextBlock>
+                            <TextBlock Margin="0 0 4 0" Foreground="Blue" FontWeight="ExtraBold">Da</TextBlock>
+                            <TextBlock>-%</TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem.Header>
+            </TabItem>
+            <TabItem Width="159" Height="120">
+                <TabItem.Header>
+                    <StackPanel Orientation="Vertical">
+                        <Image Width="75" Height="75" Source="https://shinycolors.info/w/images/8/87/Icon_Chiyoko_P_SSR_06.png"></Image>
+                        <StackPanel Margin="0 8 0 0" Orientation="Horizontal">
+                            <TextBlock Margin="0 0 4 0" Foreground="DeepPink" FontWeight="ExtraBold">Vo</TextBlock>
+                            <TextBlock Margin="0 0 8 0">-%</TextBlock>
+                            <TextBlock Margin="0 0 4 0" Foreground="DarkOrange" FontWeight="ExtraBold">Vi</TextBlock>
+                            <TextBlock Margin="0 0 8 0">-%</TextBlock>
+                            <TextBlock Margin="0 0 4 0" Foreground="Blue" FontWeight="ExtraBold">Da</TextBlock>
+                            <TextBlock>-%</TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem.Header>
+            </TabItem>
+            <TabItem Width="159" Height="120">
+                <TabItem.Header>
+                    <StackPanel Orientation="Vertical">
+                        <Image Width="75" Height="75" Source="https://shinycolors.info/w/images/8/87/Icon_Chiyoko_P_SSR_06.png"></Image>
+                        <StackPanel Margin="0 8 0 0" Orientation="Horizontal">
+                            <TextBlock Margin="0 0 4 0" Foreground="DeepPink" FontWeight="ExtraBold">Vo</TextBlock>
+                            <TextBlock Margin="0 0 8 0">-%</TextBlock>
+                            <TextBlock Margin="0 0 4 0" Foreground="DarkOrange" FontWeight="ExtraBold">Vi</TextBlock>
+                            <TextBlock Margin="0 0 8 0">-%</TextBlock>
+                            <TextBlock Margin="0 0 4 0" Foreground="Blue" FontWeight="ExtraBold">Da</TextBlock>
+                            <TextBlock>-%</TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem.Header>
+            </TabItem>
+            <TabItem Width="159" Height="120">
+                <TabItem.Header>
+                    <StackPanel Orientation="Vertical">
+                        <Image Width="75" Height="75" Source="https://shinycolors.info/w/images/8/87/Icon_Chiyoko_P_SSR_06.png"></Image>
+                        <StackPanel Margin="0 8 0 0" Orientation="Horizontal">
+                            <TextBlock Margin="0 0 4 0" Foreground="DeepPink" FontWeight="ExtraBold">Vo</TextBlock>
+                            <TextBlock Margin="0 0 8 0">-%</TextBlock>
+                            <TextBlock Margin="0 0 4 0" Foreground="DarkOrange" FontWeight="ExtraBold">Vi</TextBlock>
+                            <TextBlock Margin="0 0 8 0">-%</TextBlock>
+                            <TextBlock Margin="0 0 4 0" Foreground="Blue" FontWeight="ExtraBold">Da</TextBlock>
+                            <TextBlock>-%</TextBlock>
+                        </StackPanel>
+                    </StackPanel>
+                </TabItem.Header>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
