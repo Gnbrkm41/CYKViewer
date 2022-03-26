@@ -31,7 +31,8 @@ if (window.location.hostname.startsWith("shinycolors.enza.fun")) {
     Debug_Console("Hello from WebView2!");
 
     // Shortcuts to the host objects - can't be used, because there's issues where host objects are GC'd prematurely
-    // While the bug is fixed in 1.0.707-prerelease, 
+    // While the bug is fixed in 1.0.707-prerelease, there isn't enough benefits to justify using the shortcuts again
+    // when it might break again and cause misbehaviour.
     // https://github.com/MicrosoftEdge/WebView2Feedback/issues/335
     // var SC_CommsExtractionMenuEntry = chrome.webview.hostObjects.sync.SC_CommsExtractionMenuEntry;
     // var SC_BgmEnableMenuEntry = chrome.webview.hostObjects.sync.SC_BgmEnableMenuEntry;
