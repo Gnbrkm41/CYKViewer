@@ -5,8 +5,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CYKViewer"
         mc:Ignorable="d"
-        Title="Window1" Height="600" Width="800">
+        Title="페스 요약" Height="600" Width="800">
     <Grid>
+        <Grid>
+            
+        </Grid>
         <TabControl>
             <TabItem Width="159" Height="120">
                 <TabItem.Header>
@@ -23,11 +26,215 @@
                     </StackPanel>
                 </TabItem.Header>
                 <StackPanel>
-                    <TextBox>TOTAL STAT STUFFS GO HERE</TextBox>
+                    <!--<TextBox> 속성별 스탯 / 덱 평가치 / 인기인이랑 차분함 / </TextBox>-->
+                    <Border BorderBrush="{StaticResource {x:Static SystemColors.ActiveBorderBrushKey}}" BorderThickness="1" Margin="0 0 0 2">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Grid.Column="0" Grid.ColumnSpan="2">
+                                <Image Source="/CYKViewer;component/Resources/DeckRank/a1.png" Width="65" Margin="4"/>
+                                <StackPanel Margin="8 0 0 0" VerticalAlignment="Center">
+                                    <TextBlock>유닛 평가치</TextBlock>
+                                    <TextBlock VerticalAlignment="Center" FontSize="20" FontWeight="Bold">12300</TextBlock>
+                                </StackPanel>
+                            </StackPanel>
+                            <Grid Grid.Column="2" Grid.ColumnSpan="2">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="0" Grid.Column="0">
+                                    <Image Source="/CYKViewer;component/Resources/StatusIcon/vo.png" Height="35" />
+                                    <TextBlock VerticalAlignment="Center" FontSize="16" Margin="4 0 0 0" FontWeight="SemiBold">14000</TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="0" Grid.Column="1">
+                                    <Image Source="/CYKViewer;component/Resources/StatusIcon/da.png" Height="35" />
+                                    <TextBlock VerticalAlignment="Center" FontSize="16" Margin="4 0 0 0" FontWeight="SemiBold">14000</TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="0">
+                                    <Image Source="/CYKViewer;component/Resources/StatusIcon/vi.png" Height="35" />
+                                    <TextBlock VerticalAlignment="Center" FontSize="16" Margin="4 0 0 0" FontWeight="SemiBold">14000</TextBlock>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Grid.Row="1" Grid.Column="1">
+                                    <Image Source="/CYKViewer;component/Resources/StatusIcon/me.png" Height="35" />
+                                    <TextBlock VerticalAlignment="Center" FontSize="16" Margin="4 0 0 0" FontWeight="SemiBold">14000</TextBlock>
+                                </StackPanel>
+
+                            </Grid>
+                            <Grid Grid.Column="5" Margin="5" VerticalAlignment="Top">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                    <RowDefinition />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="3*"/>
+                                    <ColumnDefinition Width="2*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Right">인기인: </TextBlock>
+                                <TextBlock Grid.Row="0" Grid.Column="1" HorizontalAlignment="Right">1</TextBlock>
+                                <TextBlock Grid.Row="1" Grid.Column="0" HorizontalAlignment="Right">차분함:</TextBlock>
+                                <TextBlock Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right">1</TextBlock>
+                            </Grid>
+                        </Grid>
+                    </Border>
                     <TabControl TabStripPlacement="Left">
+                        <TabItem >
+                            <TabItem.Header>
+                                <Border BorderThickness="3">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <TextBlock VerticalAlignment="Center" Margin="0 0 8 0" Foreground="MediumVioletRed" FontWeight="ExtraBold">Le</TextBlock>
+                                        <Image Width="50" Height="50" Source="https://shinycolors.info/w/images/8/87/Icon_Chiyoko_P_SSR_06.png"/>
+                                        <StackPanel Margin="8 0 0 0" MinWidth="90">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="DeepPink" FontWeight="ExtraBold">Vo</TextBlock>
+                                                <TextBlock>1000 (2000)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="DarkOrange" FontWeight="ExtraBold">Vi</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="Blue" FontWeight="ExtraBold">Da</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="MediumVioletRed" FontWeight="ExtraBold">Me</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </TabItem.Header>
+                        </TabItem>
                         <TabItem>
-                            <TabItem.Header>AAAAAAAAAAAAA</TabItem.Header>
-                            AAAAAAAAAAAAAAAAA
+                            <TabItem.Header>
+                                <Border BorderThickness="3">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <TextBlock VerticalAlignment="Center" Margin="0 0 8 0" Foreground="MediumVioletRed" FontWeight="ExtraBold">Le</TextBlock>
+                                        <Image Width="50" Height="50" Source="https://shinycolors.info/w/images/8/87/Icon_Chiyoko_P_SSR_06.png"/>
+                                        <StackPanel Margin="8 0 0 0" MinWidth="90">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="DeepPink" FontWeight="ExtraBold">Vo</TextBlock>
+                                                <TextBlock>1000 (2000)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="DarkOrange" FontWeight="ExtraBold">Vi</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="Blue" FontWeight="ExtraBold">Da</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="MediumVioletRed" FontWeight="ExtraBold">Me</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </TabItem.Header>
+                            BBBBBBBBBBB
+                        </TabItem>
+                        <TabItem>
+                            <TabItem.Header>
+                                <Border BorderThickness="3">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <TextBlock VerticalAlignment="Center" Margin="0 0 8 0" Foreground="MediumVioletRed" FontWeight="ExtraBold">Le</TextBlock>
+                                        <Image Width="50" Height="50" Source="https://shinycolors.info/w/images/8/87/Icon_Chiyoko_P_SSR_06.png"/>
+                                        <StackPanel Margin="8 0 0 0" MinWidth="90">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="DeepPink" FontWeight="ExtraBold">Vo</TextBlock>
+                                                <TextBlock>1000 (2000)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="DarkOrange" FontWeight="ExtraBold">Vi</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="Blue" FontWeight="ExtraBold">Da</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="MediumVioletRed" FontWeight="ExtraBold">Me</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </TabItem.Header>
+                        </TabItem>
+                        <TabItem>
+                            <TabItem.Header>
+                                <Border BorderThickness="3">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <TextBlock VerticalAlignment="Center" Margin="0 0 8 0" Foreground="MediumVioletRed" FontWeight="ExtraBold">Le</TextBlock>
+                                        <Image Width="50" Height="50" Source="https://shinycolors.info/w/images/8/87/Icon_Chiyoko_P_SSR_06.png"/>
+                                        <StackPanel Margin="8 0 0 0" MinWidth="90">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="DeepPink" FontWeight="ExtraBold">Vo</TextBlock>
+                                                <TextBlock>1000 (2000)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="DarkOrange" FontWeight="ExtraBold">Vi</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="Blue" FontWeight="ExtraBold">Da</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="MediumVioletRed" FontWeight="ExtraBold">Me</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </TabItem.Header>
+                        </TabItem>
+                        <TabItem>
+                            <TabItem.Header>
+                                <Border BorderThickness="3">
+                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                                        <TextBlock VerticalAlignment="Center" Margin="0 0 8 0" Foreground="MediumVioletRed" FontWeight="ExtraBold">Le</TextBlock>
+                                        <Image Width="50" Height="50" Source="https://shinycolors.info/w/images/8/87/Icon_Chiyoko_P_SSR_06.png"/>
+                                        <StackPanel Margin="8 0 0 0" MinWidth="90">
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="DeepPink" FontWeight="ExtraBold">Vo</TextBlock>
+                                                <TextBlock>1000 (2000)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="DarkOrange" FontWeight="ExtraBold">Vi</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="Blue" FontWeight="ExtraBold">Da</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock Margin="0 0 4 0" Width="18" Foreground="MediumVioletRed" FontWeight="ExtraBold">Me</TextBlock>
+                                                <TextBlock>- (-)</TextBlock>
+                                            </StackPanel>
+
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </TabItem.Header>
                         </TabItem>
                         
                     </TabControl>

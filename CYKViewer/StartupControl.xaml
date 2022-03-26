@@ -12,7 +12,7 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Image Source="/CYKViewer;component/image.png" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Image Source="/CYKViewer;component/Resources/background.png" Stretch="UniformToFill" HorizontalAlignment="Center" VerticalAlignment="Center"/>
         <Grid Grid.Column="1" Width="150" Height="230">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>

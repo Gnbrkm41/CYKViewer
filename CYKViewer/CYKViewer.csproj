@@ -15,12 +15,11 @@
 
   <ItemGroup>
     <None Remove="image.png" />
+    <None Remove="Resources\*" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="image.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Resource>
+    <Resource Include="Resources\*" />
   </ItemGroup>
 
   <ItemGroup>
@@ -62,5 +61,11 @@
 
   <ItemGroup>
     <TrimmerRootAssembly Include="PresentationCore" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Update="Resources\background.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
   </ItemGroup>
 </Project>
