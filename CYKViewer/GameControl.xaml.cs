@@ -33,6 +33,7 @@ namespace CYKViewer
         private MenuEntry _commsExtraction;
         private MenuEntry _enableBgm;
         private MenuEntry _devMode;
+        private string _scriptId;
 
         private readonly Settings _settings;
         private readonly System.Timers.Timer _statusBarTimer = new(10000) { AutoReset = false, Enabled = false };
@@ -146,7 +147,7 @@ $@"(function()
             file.Close();
         }
 
-        private void PrepareLocalizationPatchOnInitialLoad(object sender, CoreWebView2InitializationCompletedEventArgs e)
+        private async void PrepareLocalizationPatchOnInitialLoad(object sender, CoreWebView2InitializationCompletedEventArgs e)
         {
             webView.CoreWebView2.Settings.IsStatusBarEnabled = false;
             webView.CoreWebView2.Settings.AreDefaultContextMenusEnabled = false;
@@ -197,6 +198,36 @@ $@"(function()
             webView.CoreWebView2.AddHostObjectToScript("SC_CommsExtractionMenuEntry", _commsExtraction);
             webView.CoreWebView2.AddHostObjectToScript("SC_BgmEnableMenuEntry", _enableBgm);
             webView.CoreWebView2.AddHostObjectToScript("SC_DevModeEnableMenuEntry", _devMode);
+
+            string scriptToExecute = File.ReadAllText("scripts/pre-inject.js");
+            string patchScript = null;
+            if (locPatchCheckBox.IsChecked == true)
+            {
+                try
+                {
+                    patchScript = File.ReadAllText(s_scriptPath);
+                }
+                catch (IOException ex)
+                {
+                    Debug.WriteLine($"Failed to read the script: {ex}");
+                }
+            }
+            else // Alternative script for supporting background BGM functionality without the loc. script
+            {
+                try
+                {
+                    patchScript = File.ReadAllText("scripts/alt-script.js");
+                }
+                catch (IOException ex)
+                {
+                    Debug.WriteLine($"Failed to read the script: {ex}");
+                }
+            }
+
+            scriptToExecute += patchScript;
+            scriptToExecute += '}';
+
+            _scriptId = await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(scriptToExecute);
         }
 
         private async void BgmButton_Click(object sender, RoutedEventArgs e)
@@ -226,52 +257,13 @@ $@"(function()
             }
         }
 
-        private async void OnNavigationStart(object sender, CoreWebView2NavigationStartingEventArgs e)
+        private void OnNavigationStart(object sender, CoreWebView2NavigationStartingEventArgs e)
         {
             // Disable the BGM / Comms extract button - the script should re-enable the buttons
             // if the URL is valid and the script is loaded.
             bgmButton.IsEnabled = false;
             extractButton.IsEnabled = false;
             devModeButton.IsEnabled = false;
-
-            // Ensure CoreWebView is initialized first
-            if (webView.CoreWebView2 == null)
-            {
-                return;
-            }
-
-            string scriptToExecute = File.ReadAllText("scripts/pre-inject.js");
-
-            if (e.Uri.Contains("shinycolors.enza.fun"))
-            {
-                string patchScript = null;
-                if (locPatchCheckBox.IsChecked == true)
-                {
-                    try
-                    {
-                        patchScript = File.ReadAllText(s_scriptPath);
-                    }
-                    catch (IOException ex)
-                    {
-                        Debug.WriteLine($"Failed to read the script: {ex}");
-                    }
-                }
-                else // Alternative script for supporting background BGM functionality without the loc. script
-                {
-                    try
-                    {
-                        patchScript = File.ReadAllText("scripts/alt-script.js");
-                    }
-                    catch (IOException ex)
-                    {
-                        Debug.WriteLine($"Failed to read the script: {ex}");
-                    }
-                }
-
-                scriptToExecute += patchScript;
-            }
-
-            _ = await webView.ExecuteScriptAsync(scriptToExecute);
 
             if (_settings.LocalizationPatchVersion?.EndsWith("(새로고침 필요)") == true)
             {
@@ -526,6 +518,46 @@ $@"(function()
         {
             Debug.WriteLine("HOST: DevMode Button Clicked");
             _ = await webView.CoreWebView2.ExecuteScriptAsync($"Implementation_InvokeHandler(\"{_devMode.Id}\");");
+        }
+
+        private async void OnPatchEnableChange(object sender, RoutedEventArgs e)
+        {
+            if (_scriptId != null)
+            {
+                webView.CoreWebView2.RemoveScriptToExecuteOnDocumentCreated(_scriptId);
+            }
+
+            string scriptToExecute = File.ReadAllText("scripts/pre-inject.js");
+            string patchScript = null;
+            if (locPatchCheckBox.IsChecked == true)
+            {
+                try
+                {
+                    patchScript = File.ReadAllText(s_scriptPath);
+                }
+                catch (IOException ex)
+                {
+                    Debug.WriteLine($"Failed to read the script: {ex}");
+                }
+            }
+            else // Alternative script for supporting background BGM functionality without the loc. script
+            {
+                try
+                {
+                    patchScript = File.ReadAllText("scripts/alt-script.js");
+                }
+                catch (IOException ex)
+                {
+                    Debug.WriteLine($"Failed to read the script: {ex}");
+                }
+            }
+
+            scriptToExecute += patchScript;
+
+            scriptToExecute += '}';
+
+            _scriptId = await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(scriptToExecute);
+            
         }
     }
     public class GameScreenSize

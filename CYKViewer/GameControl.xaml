@@ -57,7 +57,7 @@
                         <Button Grid.Column="1" Name="forwardButton" Margin="0 0 2 0" IsEnabled="{Binding Path=CanGoForward, ElementName=webView}" Click="GoForward">앞으로</Button>
                         <Button Grid.Column="2" Name="RefreshButton" Click="Refresh">새로고침</Button>
                     </Grid>
-                    <CheckBox Name="locPatchCheckBox" Margin="0 7 0 0" IsChecked="{Binding Path=EnableKoreanPatch, Mode=TwoWay}">한글패치 켜기</CheckBox>
+                    <CheckBox Name="locPatchCheckBox" Margin="0 7 0 0" IsChecked="{Binding Path=EnableKoreanPatch, Mode=TwoWay}" Click="OnPatchEnableChange">한글패치 켜기</CheckBox>
                     <TextBlock Margin="0 7 0 4">스크린샷 저장 경로</TextBlock>
                     <TextBox Name="screenshotDirTextBox" Text="{Binding Path=ScreenshotSavePath, Mode=TwoWay}" KeyDown="DetectEnterAndUpdate" />
                     <Button Name="screenshotFolderSelectButton" Margin="0 2 0 0" Height="30" Click="SelectScreenshotFolder">폴더 선택</Button>
