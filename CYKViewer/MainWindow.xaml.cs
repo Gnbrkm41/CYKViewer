@@ -55,6 +55,12 @@ namespace CYKViewer
                 }
             }
 
+            if (Microsoft.Web.WebView2.Core.CoreWebView2Environment.GetAvailableBrowserVersionString() == null)
+            {
+                // WebView is not installed, throw a popup that they need one
+                _ = MessageBox.Show("Microsoft Edge WebView2를 발견하지 못했습니다. WebView2가 설치되어 있는지 확인해주세요.", "CYKViewer", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+
             // TODO: move the methods under 'StartupControl' to a better place?
             Settings settings = StartupControl.ReadSettings(false);
             defaultProfile ??= settings?.DefaultProfile;
