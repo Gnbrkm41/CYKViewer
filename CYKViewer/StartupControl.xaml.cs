@@ -281,8 +281,8 @@ namespace CYKViewer
                 // Added in 1.0.3 - if null (does not exist), set a default value of 1.0x
                 settings.GameScreenSize ??= new GameScreenSize(1.0);
 
-                // Added in 1.0.4 - if null (does not exist), set the default value to the GitHub update link
-                settings.ScriptUpdateUrl ??= "https://newbiepr.github.io/Temporary_KRTL/ShinyColors.user.js";
+                // Added in 1.0.4 - if null (does not exist), set the default value to the GitLab update link
+                settings.ScriptUpdateUrl ??= "https://newbiepr.gitlab.io/shinymaskr.gitlab.io/ShinyColors.user.js";
 
                 // Added in 1.0.9 - if null (does not exist), start with the menu open
                 settings.MenuOpened ??= true;
@@ -294,7 +294,7 @@ namespace CYKViewer
                     EnableKoreanPatch = true,
                     ScreenshotSavePath = System.IO.Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "CYKViewer"),
                     GameScreenSize = new GameScreenSize(1.0),
-                    ScriptUpdateUrl = "https://newbiepr.github.io/Temporary_KRTL/ShinyColors.user.js",
+                    ScriptUpdateUrl = "https://newbiepr.gitlab.io/shinymaskr.gitlab.io/ShinyColors.user.js",
                     MenuOpened = true
                 };
             }
