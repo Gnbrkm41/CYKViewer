@@ -199,7 +199,7 @@ $@"(function()
             webView.CoreWebView2.AddHostObjectToScript("SC_BgmEnableMenuEntry", _enableBgm);
             webView.CoreWebView2.AddHostObjectToScript("SC_DevModeEnableMenuEntry", _devMode);
 
-            string scriptToExecute = File.ReadAllText("scripts/pre-inject.js");
+            string scriptToExecute = File.ReadAllText(Path.Join(Environment.ProcessPath, "scripts/pre-inject.js"));
             string patchScript = null;
             if (locPatchCheckBox.IsChecked == true)
             {
@@ -216,7 +216,7 @@ $@"(function()
             {
                 try
                 {
-                    patchScript = File.ReadAllText("scripts/alt-script.js");
+                    patchScript = File.ReadAllText(Path.Join(Environment.ProcessPath, "scripts/alt-script.js"));
                 }
                 catch (IOException ex)
                 {
