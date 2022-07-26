@@ -1,6 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
+	<PropertyGroup>
+		<PublishDependsOn>MyBeforePublish;$(PublishDependsOn);MyAfterPublish</PublishDependsOn>
+	</PropertyGroup>
+
+	<Target Name="MyBeforePublish">
+		<PropertyGroup>
+			<DetectPublishBuild>true</DetectPublishBuild>
+		</PropertyGroup>
+	</Target>
+	<Target Name="MyAfterPublish">
+		<PropertyGroup>
+			<DetectPublishBuild>false</DetectPublishBuild>
+		</PropertyGroup>
+	</Target>
+
+
+	<PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net6.0-windows</TargetFramework>
     <UseWPF>true</UseWPF>
@@ -8,9 +24,9 @@
     <Authors>Gnbrkm41</Authors>
     <Product>CYKViewer</Product>
     <Version>1.0.16</Version>
-	<SelfContained>true</SelfContained>
-	<PublishSingleFile>true</PublishSingleFile>
-	<RuntimeIdentifier>win-x64</RuntimeIdentifier>
+	<SelfContained Condition="'$(DetectPublishBuild)' == 'true'">true</SelfContained>
+	<PublishSingleFile Condition="'$(DetectPublishBuild)' == 'true'">true</PublishSingleFile>
+	<RuntimeIdentifier Condition="'$(DetectPublishBuild)' == 'true'">win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <ItemGroup>
