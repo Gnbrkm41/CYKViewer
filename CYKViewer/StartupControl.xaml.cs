@@ -210,6 +210,10 @@ namespace CYKViewer
             {
                 _ = MessageBox.Show(_parentWindow, $"패치 스크립트 업데이트 주소가 올바르지 않습니다. {Environment.NewLine}주소: {_settings.ScriptUpdateUrl}{Environment.NewLine}메시지: {ioEx}", "업데이트 중 오류 발생");
             }
+            catch (ArgumentException ae)
+            {
+                _ = MessageBox.Show(_parentWindow, $"패치 스크립트 업데이트 주소가 올바르지 않습니다. {Environment.NewLine}주소: {_settings.ScriptUpdateUrl}{Environment.NewLine}메시지: {ae}", "업데이트 중 오류 발생");
+            }
             catch (TaskCanceledException tcEx)
             {
                 // Timeout (100s). Not sure what to do about it - it's unlikely, but we don't want to crash the app
