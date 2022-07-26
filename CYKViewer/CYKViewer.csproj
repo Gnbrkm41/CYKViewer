@@ -9,7 +9,6 @@
     <Product>CYKViewer</Product>
     <Version>1.0.16</Version>
 	<PublishSingleFile>true</PublishSingleFile>
-	<PublishTrimmed>true</PublishTrimmed>
   </PropertyGroup>
 
   <ItemGroup>
