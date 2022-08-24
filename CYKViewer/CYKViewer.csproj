@@ -12,7 +12,6 @@
 	<SelfContained Condition="'$(Configuration)'=='Release'">true</SelfContained>
 	<PublishSingleFile Condition="'$(Configuration)'=='Release'">true</PublishSingleFile>
 	<RuntimeIdentifier Condition="'$(Configuration)'=='Release'">win-x64</RuntimeIdentifier>
-	<EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <ItemGroup>
