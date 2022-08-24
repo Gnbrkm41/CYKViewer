@@ -21,3 +21,8 @@ jobs:
       run: dotnet restore
     - name: Build publish
       run: dotnet publish -c Release
+    - name: Upload a Build Artifact
+      uses: actions/upload-artifact@v3.1.0
+      with:
+        path: CYKViewer/bin/*
+        if-no-files-found: error
