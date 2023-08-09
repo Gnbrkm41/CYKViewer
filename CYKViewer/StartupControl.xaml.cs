@@ -281,7 +281,29 @@ namespace CYKViewer
             if (File.Exists(s_settingsPath))
             {
                 string settingsJson = File.ReadAllText(s_settingsPath);
-                settings = JsonSerializer.Deserialize<Settings>(settingsJson, s_serializerOptions);
+
+                try
+                {
+                    settings = JsonSerializer.Deserialize<Settings>(settingsJson, s_serializerOptions);
+                }
+                catch (JsonException ex)
+                {
+                    // Failed to parse the JSON because it was malformed.
+                    if (createNew)
+                    {
+                        return new Settings
+                        {
+                            EnableKoreanPatch = true,
+                            ScreenshotSavePath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "CYKViewer"),
+                            GameScreenSize = new GameScreenSize(1.0),
+                            ScriptUpdateUrl = "https://newbiepr.gitlab.io/shinymaskr.gitlab.io/ShinyColors.user.js",
+                            MenuOpened = true,
+                            EnableGoogleTranslate = false
+                        };
+                    }
+
+                    throw new InvalidOperationException("Settings JSON was malformed", ex);
+                }
 
                 // Added in 1.0.3 - if null (does not exist), set a default value of 1.0x
                 settings.GameScreenSize ??= new GameScreenSize(1.0);
@@ -314,7 +336,7 @@ namespace CYKViewer
         public static async void UpdateSettingsFile(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             // TODO: Pull the non-config data like the patch version out to a separate type?
-            if (e.PropertyName == "LocalizationPatchVersion" || e.PropertyName == "ClientVersion")
+            if (e.PropertyName == "LocalizationPatchVersion" || e.PropertyName == "ClientVersion" || e.PropertyName == "ScriptUpdated")
             {
                 return;
             }

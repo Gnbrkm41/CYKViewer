@@ -62,13 +62,23 @@ namespace CYKViewer
             }
 
             // TODO: move the methods under 'StartupControl' to a better place?
-            Settings settings = StartupControl.ReadSettings(false);
+            Settings settings;
+
+            try
+            {
+                settings = StartupControl.ReadSettings(false);
+            }
+            catch (InvalidOperationException ex) when (ex.Message == "Settings JSON was malformed")
+            {
+                _ = MessageBox.Show("설정 JSON이 올바르지 않습니다. 설정을 초기화합니다.");
+                settings = StartupControl.ReadSettings(true);
+            }
             defaultProfile ??= settings?.DefaultProfile;
 
             if (defaultProfile != null)
             {
                 string pathToAppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                string userFolderPath = System.IO.Path.Join(pathToAppData, "CYKViewer", "userData", defaultProfile);
+                string userFolderPath = Path.Join(pathToAppData, "CYKViewer", "userData", defaultProfile);
                 if (Directory.Exists(userFolderPath))
                 {
                     Version currentVersion = Assembly.GetExecutingAssembly().GetName().Version;
