@@ -30,7 +30,7 @@
             <!--The binding is a workaround to a weirdness in the WebView2 control, as it goes invisible if the height and the width is set to auto-->
             <Border Name="webViewBorder" Grid.Column="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                 <wv2:WebView2 Width="{Binding Path=ActualWidth, ElementName=webViewBorder}" Height="{Binding Path=ActualHeight, ElementName=webViewBorder}" Name="webView" d:Source="https://bing.com"
-                        CoreWebView2InitializationCompleted="PrepareLocalizationPatchOnInitialLoad" WebMessageReceived="DebugMessageReceived" NavigationStarting="OnNavigationStart" HorizontalAlignment="Left"/>
+                        CoreWebView2InitializationCompleted="PrepareLocalizationPatchOnInitialLoad" WebMessageReceived="DebugMessageReceived" NavigationStarting="OnNavigationStart" NavigationCompleted="webView_NavigationCompleted" HorizontalAlignment="Left"/>
             </Border>
             <ScrollViewer Name="sidePanelScrollViewer" Visibility="{Binding Path=MenuOpened, Converter={StaticResource BoolToCollapsedVisibilityConverter}}" Grid.Column="1" Width="306" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                 <StackPanel Name="sidePanel" Width="Auto" Grid.Column="1" Orientation="Vertical" Margin="3 0 3 3">
@@ -57,7 +57,14 @@
                         <Button Grid.Column="1" Name="forwardButton" Margin="0 0 2 0" IsEnabled="{Binding Path=CanGoForward, ElementName=webView}" Click="GoForward">앞으로</Button>
                         <Button Grid.Column="2" Name="RefreshButton" Click="Refresh">새로고침</Button>
                     </Grid>
-                    <CheckBox Name="locPatchCheckBox" Margin="0 7 0 0" IsChecked="{Binding Path=EnableKoreanPatch, Mode=TwoWay}" Click="OnPatchEnableChange">한글패치 켜기</CheckBox>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <CheckBox Name="locPatchCheckBox" Margin="0 7 0 0" Grid.Column="0" IsChecked="{Binding Path=EnableKoreanPatch, Mode=TwoWay}" Click="OnPatchEnableChange">한글패치 켜기</CheckBox>
+                        <CheckBox Name="translateWithGoogleCheckBox" Grid.Column="1" Margin="0 7 0 0" IsChecked="{Binding Path=EnableGoogleTranslate, Mode=TwoWay}" Click="translateWithGoogleCheckBox_Click">구글로 번역</CheckBox>
+                    </Grid>
                     <TextBlock Margin="0 7 0 4">스크린샷 저장 경로</TextBlock>
                     <TextBox Name="screenshotDirTextBox" Text="{Binding Path=ScreenshotSavePath, Mode=TwoWay}" KeyDown="DetectEnterAndUpdate" />
                     <Button Name="screenshotFolderSelectButton" Margin="0 2 0 0" Height="30" Click="SelectScreenshotFolder">폴더 선택</Button>

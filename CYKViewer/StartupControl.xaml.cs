@@ -255,6 +255,7 @@ namespace CYKViewer
                     Debug.WriteLine($"Updating the script...");
                     await File.WriteAllTextAsync(s_scriptPath, onlineScript);
 
+                    _settings.ScriptUpdated = true;
                     // When updating, also change the update URL.
                     string updateUrl = GetUpdateUrl(onlineScript);
                     if (updateUrl != null)
@@ -290,6 +291,9 @@ namespace CYKViewer
 
                 // Added in 1.0.9 - if null (does not exist), start with the menu open
                 settings.MenuOpened ??= true;
+
+                // Added in 1.0.17 - if null (does not exist), set the default value as false
+                settings.EnableGoogleTranslate ??= false;
             }
             else if (createNew)
             {
@@ -299,7 +303,8 @@ namespace CYKViewer
                     ScreenshotSavePath = System.IO.Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.MyPictures), "CYKViewer"),
                     GameScreenSize = new GameScreenSize(1.0),
                     ScriptUpdateUrl = "https://newbiepr.gitlab.io/shinymaskr.gitlab.io/ShinyColors.user.js",
-                    MenuOpened = true
+                    MenuOpened = true,
+                    EnableGoogleTranslate = false
                 };
             }
 

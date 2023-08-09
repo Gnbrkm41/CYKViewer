@@ -33,7 +33,7 @@ namespace CYKViewer
         private MenuEntry _commsExtraction;
         private MenuEntry _enableBgm;
         private MenuEntry _devMode;
-        private string _scriptId;
+        private string _localisationScriptId;
 
         private readonly Settings _settings;
         private readonly System.Timers.Timer _statusBarTimer = new(10000) { AutoReset = false, Enabled = false };
@@ -228,7 +228,7 @@ $@"(function()
             scriptToExecute += patchScript;
             scriptToExecute += '}';
 
-            _scriptId = await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(scriptToExecute);
+            _localisationScriptId = await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(scriptToExecute);
         }
 
         private async void BgmButton_Click(object sender, RoutedEventArgs e)
@@ -265,6 +265,12 @@ $@"(function()
             bgmButton.IsEnabled = false;
             extractButton.IsEnabled = false;
             devModeButton.IsEnabled = false;
+
+            if (_settings.ScriptUpdated)
+            {
+                OnPatchEnableChange(null, null);
+                _settings.ScriptUpdated = false;
+            }
 
             if (_settings.LocalizationPatchVersion?.EndsWith("(새로고침 필요)") == true)
             {
@@ -445,6 +451,8 @@ $@"(function()
                 _statusBarTimer.Start();
             }
 
+            OnPatchEnableChange(null, null);
+
             // When updating, also change the update URL.
             Match updateUrlMatch = Regex.Match(script, @"\s*\/\/\s*@updateURL\s*(?<updateUrl>.*?)\s*$", RegexOptions.Multiline);
             if (updateUrlMatch.Success)
@@ -523,9 +531,9 @@ $@"(function()
 
         private async void OnPatchEnableChange(object sender, RoutedEventArgs e)
         {
-            if (_scriptId != null)
+            if (_localisationScriptId != null)
             {
-                webView.CoreWebView2.RemoveScriptToExecuteOnDocumentCreated(_scriptId);
+                webView.CoreWebView2.RemoveScriptToExecuteOnDocumentCreated(_localisationScriptId);
             }
 
             string scriptToExecute = File.ReadAllText("scripts/pre-inject.js");
@@ -557,8 +565,25 @@ $@"(function()
 
             scriptToExecute += '}';
 
-            _scriptId = await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(scriptToExecute);
+            _localisationScriptId = await webView.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync(scriptToExecute);
             
+        }
+
+        private async void translateWithGoogleCheckBox_Click(object sender, RoutedEventArgs e)
+        {
+            string tryChange = await webView.CoreWebView2.ExecuteScriptAsync($"ChangeTranslationStatus({(translateWithGoogleCheckBox.IsChecked == true ? "true" : "false")})");
+
+            // "null" means the script isn't injected. If we want to enable translation, we need to inject the script first.
+            if (tryChange == "null" && translateWithGoogleCheckBox.IsChecked == true)
+            {
+                string scriptToExecute = File.ReadAllText("scripts/translate.js");
+                await webView.CoreWebView2.ExecuteScriptAsync(scriptToExecute);
+            }
+        }
+
+        private void webView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
+        {
+            translateWithGoogleCheckBox_Click(null, null);
         }
     }
     public class GameScreenSize

@@ -24,6 +24,18 @@ namespace CYKViewer
             }
         }
 
+        // Added in 1.0.17
+        private bool? _enableGoogleTranslate;
+        public bool? EnableGoogleTranslate
+        {
+            get => _enableGoogleTranslate;
+            set
+            {
+                _enableGoogleTranslate = value;
+                NotifyPropertyChanged();
+            }
+        }
+
         private string _screenshotSavePath;
         public string ScreenshotSavePath 
         {
@@ -105,6 +117,18 @@ namespace CYKViewer
             set
             {
                 _clientVersion = value;
+                NotifyPropertyChanged();
+            }
+        }
+
+        private bool _scriptUpdated;
+        [JsonIgnore]
+        public bool ScriptUpdated
+        {
+            get => _scriptUpdated;
+            set
+            {
+                _scriptUpdated = value;
                 NotifyPropertyChanged();
             }
         }

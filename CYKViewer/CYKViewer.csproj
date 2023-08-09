@@ -7,7 +7,7 @@
     <ApplicationIcon>icon_49.ico</ApplicationIcon>
     <Authors>Gnbrkm41</Authors>
     <Product>CYKViewer</Product>
-    <Version>1.0.16</Version>
+    <Version>1.0.17</Version>
     <!--Workaround for https://github.com/dotnet/runtime/issues/45382#issuecomment-968600238-->
 	<SelfContained Condition="'$(Configuration)'=='Release'">true</SelfContained>
 	<PublishSingleFile Condition="'$(Configuration)'=='Release'">true</PublishSingleFile>
@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1264.42" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1901.177" />
     <PackageReference Include="NAudio" Version="2.0.1" />
     <PackageReference Include="WindowsAPICodePack-Core" Version="1.1.2" />
     <PackageReference Include="WindowsAPICodePack-Shell" Version="1.1.1" />
@@ -54,6 +54,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="scripts\pre-inject.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="scripts\translate.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="읽어주세요.txt">
