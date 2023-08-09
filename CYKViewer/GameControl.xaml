@@ -92,6 +92,7 @@
                     <TextBox Margin="0 4 0 0" Name="scriptUpdateUrlTextBox" Text="{Binding ScriptUpdateUrl, Mode=TwoWay}"  KeyDown="DetectEnterAndUpdate" />
                     <Button Margin="0 2 0 0" Name="scriptUpdateButton" Height="30" Click="ForceUpdateScript">강제 업데이트 (새로고침 후 적용)</Button>
                     <Button Margin="0 4 0 0" Name="devModeButton" Height="30" Click="devModeButton_Click" IsEnabled="False">개발자 모드</Button>
+                    <Button Margin="0 4 0 0" Name="serverChangeButton" Height="30" Click="serverChangeButton_Click" IsEnabled="False">서버 바꾸기</Button>
                 </StackPanel>
             </ScrollViewer>
 

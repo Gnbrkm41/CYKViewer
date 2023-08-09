@@ -90,6 +90,11 @@ if (window.location.hostname.startsWith("shinycolors.enza.fun")) {
             chrome.webview.hostObjects.sync.SC_DevModeEnableMenuEntry.Set(menuId, commandName);
             Debug_Console(`"${commandName}" - Host called`);
         }
+        else if (commandName.includes("서버")) {
+            Debug_Console(`"${commandName}" - is server change related, calling the host`);
+            chrome.webview.hostObjects.sync.SC_ChangeServerMenuEntry.Set(menuId, commandName);
+            Debug_Console(`"${commandName}" - Host called`);
+        }
 
         Debug_Console(`"${commandName}" - Added to ID ${menuId}`);
         return menuId;
@@ -117,6 +122,11 @@ if (window.location.hostname.startsWith("shinycolors.enza.fun")) {
             else if (menuEntry.commandName.includes("개발자")) {
                 Debug_Console(`"${menuEntry.commandName}" - is devmode related, calling the host`);
                 chrome.webview.hostObjects.sync.SC_DevModeEnableMenuEntry.Set(null, null);
+                Debug_Console(`"${menuEntry.commandName}" - Host called`);
+            }
+            else if (menuEntry.commandName.includes("서버")) {
+                Debug_Console(`"${menuEntry.commandName}" - is server change related, calling the host`);
+                chrome.webview.hostObjects.sync.SC_ChangeServerMenuEntry.Set(null, null);
                 Debug_Console(`"${menuEntry.commandName}" - Host called`);
             }
         }

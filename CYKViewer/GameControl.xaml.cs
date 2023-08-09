@@ -33,6 +33,7 @@ namespace CYKViewer
         private MenuEntry _commsExtraction;
         private MenuEntry _enableBgm;
         private MenuEntry _devMode;
+        private MenuEntry _changeServer;
         private string _localisationScriptId;
 
         private readonly Settings _settings;
@@ -195,9 +196,23 @@ $@"(function()
                 }
             });
 
+            _changeServer = new MenuEntry(obj =>
+            {
+                if (obj.Name == null)
+                {
+                    serverChangeButton.IsEnabled = false;
+                }
+                else
+                {
+                    serverChangeButton.Content = obj.Name;
+                    serverChangeButton.IsEnabled = true;
+                }
+            });
+
             webView.CoreWebView2.AddHostObjectToScript("SC_CommsExtractionMenuEntry", _commsExtraction);
             webView.CoreWebView2.AddHostObjectToScript("SC_BgmEnableMenuEntry", _enableBgm);
             webView.CoreWebView2.AddHostObjectToScript("SC_DevModeEnableMenuEntry", _devMode);
+            webView.CoreWebView2.AddHostObjectToScript("SC_ChangeServerMenuEntry", _changeServer);
             string processPath = Environment.ProcessPath;
             string processDir = processPath[..processPath.LastIndexOf(Path.DirectorySeparatorChar)];
             string scriptToExecute = File.ReadAllText(Path.Join(processDir, "scripts/pre-inject.js"));
@@ -584,6 +599,12 @@ $@"(function()
         private void webView_NavigationCompleted(object sender, CoreWebView2NavigationCompletedEventArgs e)
         {
             translateWithGoogleCheckBox_Click(null, null);
+        }
+
+        private async void serverChangeButton_Click(object sender, RoutedEventArgs e)
+        {
+            Debug.WriteLine("HOST: Server Change Button Clicked");
+            _ = await webView.CoreWebView2.ExecuteScriptAsync($"Implementation_InvokeHandler(\"{_changeServer.Id}\");");
         }
     }
     public class GameScreenSize
